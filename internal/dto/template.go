@@ -7,6 +7,8 @@ import (
 )
 
 type Template struct {
+	ID uint64 `json:"id"`
+
 	Body     TemplateBody `json:"body"`
 	Language string       `json:"language"`
 	Type     string       `json:"type"`

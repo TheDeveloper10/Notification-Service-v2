@@ -49,7 +49,7 @@ func (tr *TemplateRepository) UpdateTemplate(templateID uint64, template *dto.Te
 
 func (tr *TemplateRepository) GetTemplateByID(templateID uint64) (*dto.Template, util.StatusCode) {
 	rows, err := client.Database.Query(
-		"select bodyEmail, bodySMS, bodyPush, language, type from templates where id=?",
+		"select id, bodyEmail, bodySMS, bodyPush, language, type from templates where id=?",
 		templateID,
 	)
 	if err != nil {
@@ -70,7 +70,7 @@ func (tr *TemplateRepository) GetTemplateByID(templateID uint64) (*dto.Template,
 }
 
 func (tr *TemplateRepository) GetBulkTemplates(filter *dto.TemplateBulkFilter) ([]dto.Template, util.StatusCode) {
-	query := "select bodyEmail, bodySMS, bodyPush, language, type from templates"
+	query := "select id, bodyEmail, bodySMS, bodyPush, language, type from templates"
 
 	if filter.LastTemplateID > 0 {
 		query = query + fmt.Sprintf(" where id > %d", filter.LastTemplateID)
@@ -120,6 +120,7 @@ func (tr *TemplateRepository) scanTemplate(rows *sql.Rows) (*dto.Template, error
 	template := dto.Template{Body: dto.TemplateBody{}}
 
 	err := rows.Scan(
+		&template.ID,
 		&template.Body.Email,
 		&template.Body.SMS,
 		&template.Body.Push,
