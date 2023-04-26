@@ -6,6 +6,8 @@ import (
 	"notification-service/internal/config"
 	"notification-service/internal/util"
 	"time"
+
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func InitDatabaseClient(conf *config.DatabaseConfig) *sql.DB {

@@ -11,11 +11,11 @@ type TemplateBody struct {
 }
 
 func (tb *TemplateBody) Validate() error {
-	fields := 0
+	if tb.Email == nil && tb.SMS == nil && tb.Push == nil {
+		return fiber.NewError(fiber.StatusBadRequest, "You must provide an Email, SMS or Push body")
+	}
 
 	if tb.Email != nil {
-		fields++
-
 		l := len(*tb.Email)
 		if l > 2048 {
 			return fiber.NewError(fiber.StatusBadRequest, "Email body must be at most 2048 characters")
@@ -25,8 +25,6 @@ func (tb *TemplateBody) Validate() error {
 	}
 
 	if tb.SMS != nil {
-		fields++
-
 		l := len(*tb.SMS)
 		if l > 2048 {
 			return fiber.NewError(fiber.StatusBadRequest, "SMS body must be at most 2048 characters")
@@ -36,18 +34,12 @@ func (tb *TemplateBody) Validate() error {
 	}
 
 	if tb.Push != nil {
-		fields++
-
 		l := len(*tb.Push)
 		if l > 2048 {
 			return fiber.NewError(fiber.StatusBadRequest, "Push body must be at most 2048 characters")
 		} else if l <= 0 {
 			return fiber.NewError(fiber.StatusBadRequest, "Push body must be at least 1 character")
 		}
-	}
-
-	if fields != 1 {
-		return fiber.NewError(fiber.StatusBadRequest, "You must provide only one of 'email', 'sms', 'push'")
 	}
 
 	return nil

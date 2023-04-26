@@ -2,6 +2,7 @@ package api
 
 import (
 	"notification-service/internal/controller"
+	"notification-service/internal/repository"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
@@ -9,9 +10,13 @@ import (
 
 func SetUpRESTV1(app *fiber.App) {
 	var (
+		templateRepo = repository.NewBasicTemplateRepository()
+	)
+
+	var (
 		testCtrl         = controller.NewTestController()
 		notificationCtrl = controller.NewNotificationController()
-		templateCtrl     = controller.NewTemplateController()
+		templateCtrl     = controller.NewTemplateController(templateRepo)
 	)
 
 	api := app.Group("/v1")

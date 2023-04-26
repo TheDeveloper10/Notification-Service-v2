@@ -21,6 +21,6 @@ database:
   driver: mysql
   username: root
   password: nsPass1234
-  host: ns-database:3306
+  host: localhost:3306
   name: notifications_db
   pool_size: 10

@@ -15,11 +15,13 @@ func (tr *TemplateRepository) CreateTemplate(template *dto.Template) (uint64, ut
 		template.Body.Email, template.Body.SMS, template.Body.Push, template.Language, template.Type,
 	)
 	if err != nil {
+		util.Logger.Info().Msg(err.Error())
 		return 0, util.StatusError
 	}
 
 	id, err := result.LastInsertId()
 	if err != nil {
+		util.Logger.Info().Msg(err.Error())
 		return 0, util.StatusError
 	}
 
