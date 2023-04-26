@@ -25,8 +25,10 @@ func main() {
 		api.SetUpRESTV1(fiberApp)
 	}
 
-	// Starting up services
+	// HTTP REST V2
+	//
 
+	// Starting handlers
 	if hasHTTPHandler {
 		wg.Add(1)
 		go func() {
