@@ -13,7 +13,17 @@ type Template struct {
 }
 
 func (t *Template) GetBulk(c *fiber.Ctx) error {
-	return nil
+	filter := dto.TemplateBulkFilter{}
+	if err := filter.Fill(c); err != nil {
+		return err
+	}
+
+	templates, status := t.templateRepo.GetBulkTemplates(&filter)
+	if status != util.StatusSuccess {
+		return fiber.NewError(fiber.StatusInternalServerError, "Failed to get templates")
+	}
+
+	return c.Status(fiber.StatusOK).JSON(templates)
 }
 
 func (t *Template) Create(c *fiber.Ctx) error {
@@ -62,8 +72,10 @@ func (t *Template) ReplaceByID(c *fiber.Ctx) error {
 	}
 
 	status := t.templateRepo.UpdateTemplate(tid.ID, &body)
-	if status != util.StatusSuccess {
-		return fiber.NewError(fiber.StatusInternalServerError, "Failed to create template")
+	if status == util.StatusNotFound {
+		return fiber.NewError(fiber.StatusNotFound, "Template not found")
+	} else if status != util.StatusSuccess {
+		return fiber.NewError(fiber.StatusInternalServerError, "Failed to replace template")
 	}
 
 	return c.SendStatus(fiber.StatusOK)
@@ -75,5 +87,12 @@ func (t *Template) DeleteByID(c *fiber.Ctx) error {
 		return err
 	}
 
-	return nil
+	status := t.templateRepo.DeleteTemplate(tid.ID)
+	if status == util.StatusNotFound {
+		return fiber.NewError(fiber.StatusNotFound, "Template not found")
+	} else if status != util.StatusSuccess {
+		return fiber.NewError(fiber.StatusInternalServerError, "Failed to delete template")
+	}
+
+	return c.SendStatus(fiber.StatusOK)
 }
