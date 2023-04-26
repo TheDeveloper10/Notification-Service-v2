@@ -1,6 +1,8 @@
 package basic
 
 import (
+	"database/sql"
+	"fmt"
 	"notification-service/internal/client"
 	"notification-service/internal/dto"
 	"notification-service/internal/util"
@@ -56,27 +58,43 @@ func (tr *TemplateRepository) GetTemplateByID(templateID uint64) (*dto.Template,
 	defer rows.Close()
 
 	if rows.Next() {
-		template := dto.Template{Body: dto.TemplateBody{}}
-
-		err := rows.Scan(
-			&template.Body.Email,
-			&template.Body.SMS,
-			&template.Body.Push,
-			&template.Language,
-			&template.Type,
-		)
+		template, err := tr.scanTemplate(rows)
 		if err != nil {
 			return nil, util.StatusError
 		}
 
-		return &template, util.StatusSuccess
+		return template, util.StatusSuccess
 	}
 
 	return nil, util.StatusNotFound
 }
 
 func (tr *TemplateRepository) GetBulkTemplates(filter *dto.TemplateBulkFilter) ([]dto.Template, util.StatusCode) {
-	return nil, util.StatusSuccess
+	query := "select bodyEmail, bodySMS, bodyPush, language, type from templates"
+
+	if filter.LastTemplateID > 0 {
+		query = query + fmt.Sprintf(" where id > %d", filter.LastTemplateID)
+	}
+
+	query = query + fmt.Sprintf(" limit %d", filter.PerPage)
+
+	rows, err := client.Database.Query(query)
+	if err != nil {
+		return nil, util.StatusError
+	}
+	defer rows.Close()
+
+	templates := make([]dto.Template, 0)
+	for rows.Next() {
+		template, err := tr.scanTemplate(rows)
+		if err != nil {
+			return nil, util.StatusError
+		}
+
+		templates = append(templates, *template)
+	}
+
+	return templates, util.StatusSuccess
 }
 
 func (tr *TemplateRepository) DeleteTemplate(templateID uint64) util.StatusCode {
@@ -96,4 +114,18 @@ func (tr *TemplateRepository) DeleteTemplate(templateID uint64) util.StatusCode 
 	}
 
 	return util.StatusSuccess
+}
+
+func (tr *TemplateRepository) scanTemplate(rows *sql.Rows) (*dto.Template, error) {
+	template := dto.Template{Body: dto.TemplateBody{}}
+
+	err := rows.Scan(
+		&template.Body.Email,
+		&template.Body.SMS,
+		&template.Body.Push,
+		&template.Language,
+		&template.Type,
+	)
+
+	return &template, err
 }

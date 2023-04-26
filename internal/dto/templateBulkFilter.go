@@ -7,27 +7,27 @@ import (
 )
 
 type TemplateBulkFilter struct {
-	Page    uint32
-	PerPage uint32
+	PerPage        uint32
+	LastTemplateID uint64
 }
 
 func (tbf *TemplateBulkFilter) Fill(c *fiber.Ctx) error {
-	tbf.Page = 0
+	tbf.LastTemplateID = 0
 	tbf.PerPage = 20
-
-	pageStr := c.Query("page")
-	if pageStr != "" {
-		pageNum, err := strconv.ParseUint(pageStr, 10, 32)
-		if err == nil {
-			tbf.Page = uint32(pageNum)
-		}
-	}
 
 	perPageStr := c.Query("perPage")
 	if perPageStr != "" {
 		perPageNum, err := strconv.ParseUint(perPageStr, 10, 32)
 		if err == nil {
 			tbf.PerPage = uint32(perPageNum)
+		}
+	}
+
+	LastTemplateIDStr := c.Query("lastTemplateId")
+	if LastTemplateIDStr != "" {
+		LastTemplateIDNum, err := strconv.ParseUint(LastTemplateIDStr, 10, 32)
+		if err == nil && LastTemplateIDNum > 0 {
+			tbf.LastTemplateID = LastTemplateIDNum
 		}
 	}
 
