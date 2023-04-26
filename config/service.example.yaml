@@ -1,0 +1,11 @@
+service:
+  api:
+    - http_rest_v1
+    - rabbitmq_v1
+  notification_types:
+    - smtp
+    - push
+    - sms
+
+http: 
+  address: ":8081"
