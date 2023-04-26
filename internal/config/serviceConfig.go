@@ -7,4 +7,8 @@ type MasterConfig struct {
 		APIs              util.Strings `yaml:"apis"`
 		NotificationTypes util.Strings `yaml:"notification_types"`
 	} `yaml:"service"`
+
+	HTTP struct {
+		Address string `yaml:"address"`
+	} `yaml:"http"`
 }
