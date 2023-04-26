@@ -8,7 +8,7 @@ var (
 	Master *MasterConfig
 )
 
-func InitMasterConfigs() {
+func InitConfigs() {
 	Master = &MasterConfig{}
 	loadYAML(serviceConfigPath, &Master)
 }

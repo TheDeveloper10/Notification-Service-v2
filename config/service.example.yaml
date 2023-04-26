@@ -1,11 +1,26 @@
 service:
-  api:
+  apis:
     - http_rest_v1
     - rabbitmq_v1
   notification_types:
     - smtp
     - push
     - sms
+  allowed_languages:
+    - BG
+    - EN
+    - DE
+    - ES
+    - DA
+    - CS
 
 http: 
   address: ":8081"
+
+database:
+  driver: mysql
+  username: root
+  password: nsPass1234
+  host: ns-database:3306
+  name: notifications_db
+  pool_size: 10

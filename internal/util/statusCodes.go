@@ -1,6 +1,6 @@
 package util
 
-type StatusCode int8
+type StatusCode uint8
 
 const (
 	StatusSuccess StatusCode = iota

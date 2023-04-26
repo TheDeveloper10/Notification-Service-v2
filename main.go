@@ -2,14 +2,16 @@ package main
 
 import (
 	"notification-service/internal/api"
+	"notification-service/internal/client"
 	"notification-service/internal/config"
 	"notification-service/internal/util"
 	"sync"
 )
 
 func main() {
-	// Configs
-	config.InitMasterConfigs()
+	// Initializations
+	config.InitConfigs()
+	client.InitClients()
 
 	// Handlers
 	var (
