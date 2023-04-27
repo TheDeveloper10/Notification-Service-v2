@@ -2,14 +2,14 @@ package controller
 
 import (
 	"notification-service/internal/dto"
-	"notification-service/internal/repository"
+	"notification-service/internal/service"
 	"notification-service/internal/util"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 type Template struct {
-	templateRepo repository.ITemplate
+	templateSvc *service.Template
 }
 
 func (t *Template) GetBulk(c *fiber.Ctx) error {
@@ -18,7 +18,7 @@ func (t *Template) GetBulk(c *fiber.Ctx) error {
 		return err
 	}
 
-	templates, status := t.templateRepo.GetBulkTemplates(&filter)
+	templates, status := t.templateSvc.GetBulkTemplates(&filter)
 	if status != util.StatusSuccess {
 		return fiber.NewError(fiber.StatusInternalServerError, "Failed to get templates")
 	}
@@ -34,7 +34,7 @@ func (t *Template) Create(c *fiber.Ctx) error {
 		return err
 	}
 
-	id, status := t.templateRepo.CreateTemplate(&body)
+	id, status := t.templateSvc.CreateTemplate(&body)
 	if status != util.StatusSuccess {
 		return fiber.NewError(fiber.StatusInternalServerError, "Failed to create template")
 	}
@@ -48,7 +48,7 @@ func (t *Template) GetByID(c *fiber.Ctx) error {
 		return err
 	}
 
-	template, status := t.templateRepo.GetTemplateByID(tid.ID)
+	template, status := t.templateSvc.GetTemplateByID(tid.ID)
 	if status == util.StatusNotFound {
 		return fiber.NewError(fiber.StatusNotFound, "Template not found")
 	} else if status != util.StatusSuccess {
@@ -71,7 +71,7 @@ func (t *Template) ReplaceByID(c *fiber.Ctx) error {
 		return err
 	}
 
-	status := t.templateRepo.UpdateTemplate(tid.ID, &body)
+	status := t.templateSvc.UpdateTemplate(tid.ID, &body)
 	if status == util.StatusNotFound {
 		return fiber.NewError(fiber.StatusNotFound, "Template not found")
 	} else if status != util.StatusSuccess {
@@ -87,7 +87,7 @@ func (t *Template) DeleteByID(c *fiber.Ctx) error {
 		return err
 	}
 
-	status := t.templateRepo.DeleteTemplate(tid.ID)
+	status := t.templateSvc.DeleteTemplate(tid.ID)
 	if status == util.StatusNotFound {
 		return fiber.NewError(fiber.StatusNotFound, "Template not found")
 	} else if status != util.StatusSuccess {

@@ -1,14 +1,14 @@
 package controller
 
-import "notification-service/internal/repository"
+import "notification-service/internal/service"
 
 func NewTestController() *Test {
 	return &Test{}
 }
 
-func NewTemplateController(templateRepo repository.ITemplate) *Template {
+func NewTemplateController(templateSvc *service.Template) *Template {
 	return &Template{
-		templateRepo: templateRepo,
+		templateSvc: templateSvc,
 	}
 }
 
