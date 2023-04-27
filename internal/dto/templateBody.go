@@ -1,6 +1,8 @@
 package dto
 
 import (
+	"notification-service/internal/util"
+
 	"github.com/gofiber/fiber/v2"
 )
 
@@ -43,4 +45,24 @@ func (tb *TemplateBody) Validate() error {
 	}
 
 	return nil
+}
+
+func (tb *TemplateBody) Fill(values map[string]string) {
+	if tb.Email != nil {
+		emailTemplate := util.TemplateString(*tb.Email)
+		emailFilledTemplate := emailTemplate.Fill(values)
+		tb.Email = &emailFilledTemplate
+	}
+
+	if tb.SMS != nil {
+		smsTemplate := util.TemplateString(*tb.SMS)
+		smsFilledTemplate := smsTemplate.Fill(values)
+		tb.SMS = &smsFilledTemplate
+	}
+
+	if tb.Push != nil {
+		pushTemplate := util.TemplateString(*tb.Push)
+		pushFilledTemplate := pushTemplate.Fill(values)
+		tb.Push = &pushFilledTemplate
+	}
 }

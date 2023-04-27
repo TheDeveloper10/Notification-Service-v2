@@ -15,15 +15,11 @@ func (n *Notification) Send(notification *dto.Notification) (uint8, util.StatusC
 		return 1, status
 	}
 
-	if template.Body.Email != nil {
+	template.Body.Fill(notification.Placeholders)
 
-	}
-	if template.Body.SMS != nil {
+	// for _, target := range notification.Targets {
 
-	}
-	if template.Body.Push != nil {
-
-	}
+	// }
 
 	return 0, util.StatusSuccess
 }
