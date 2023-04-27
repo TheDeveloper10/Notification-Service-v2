@@ -1,6 +1,7 @@
 package service
 
 import (
+	"fmt"
 	"notification-service/internal/dto"
 	"notification-service/internal/repository"
 	"notification-service/internal/util"
@@ -21,45 +22,93 @@ func (n *Notification) Send(notificationReq *dto.NotificationRequest) (uint8, ut
 	}
 
 	template.Body.Fill(notificationReq.Placeholders)
-	wg := sync.WaitGroup{}
 
-	wg.Add(len(notificationReq.Targets))
-
-	for _, target := range notificationReq.Targets {
-		go n.handleTarget(notificationReq, &target, template, &wg)
+	conHandler := concurrentHandler{
+		wg:         sync.WaitGroup{},
+		errorsChan: make(chan error),
 	}
 
-	wg.Wait()
+	conHandler.wg.Add(len(notificationReq.Placeholders))
+
+	for index, target := range notificationReq.Targets {
+		go n.handleTarget(
+			&targetData{
+				index:           index,
+				target:          &target,
+				notificationReq: notificationReq,
+				template:        template,
+			},
+			&conHandler,
+		)
+	}
+
+	conHandler.wg.Wait()
+
 	return 0, util.StatusSuccess
 }
 
-func (n *Notification) handleTarget(
-	notificationReq *dto.NotificationRequest,
-	target *dto.NotificationTarget,
-	template *dto.Template,
-	wg *sync.WaitGroup) {
-	defer wg.Done()
+func (n *Notification) handleTarget(tarData *targetData, conHandler *concurrentHandler) {
+	defer conHandler.wg.Done()
 
-	for _, notificationType := range []notificationType{
-		{TargetInfo: target.Email, Body: template.Body.Email, SendFunc: n.notificationSenderRepo.SendEmail},
-		{TargetInfo: target.PhoneNumber, Body: template.Body.SMS, SendFunc: n.notificationSenderRepo.SendSMS},
-		{TargetInfo: target.FCMRegistrationToken, Body: template.Body.Push, SendFunc: n.notificationSenderRepo.SendPush},
-	} {
-		if notificationType.TargetInfo != nil && notificationType.Body != nil {
-			bodyTemplate := util.TemplateString(*notificationType.Body)
+	notificationTypes := []notificationType{
+		{
+			ContactInfo: tarData.target.Email,
+			Body:        tarData.template.Body.Email,
+			SendFunc:    n.notificationSenderRepo.SendEmail,
+		},
+		{
+			ContactInfo: tarData.target.PhoneNumber,
+			Body:        tarData.template.Body.SMS,
+			SendFunc:    n.notificationSenderRepo.SendSMS,
+		},
+		{
+			ContactInfo: tarData.target.FCMRegistrationToken,
+			Body:        tarData.template.Body.Push,
+			SendFunc:    n.notificationSenderRepo.SendPush,
+		},
+	}
 
-			simpleNotification := dto.SimpleNotification{
-				ContactInfo: *notificationType.TargetInfo,
-				Title:       notificationReq.Title,
-				Body:        bodyTemplate.Fill(target.Placeholders),
+	for _, nt := range notificationTypes {
+		if nt.ContactInfo != nil && nt.Body != nil {
+			bodyTemplate := util.TemplateString(*nt.Body)
+
+			notification := dto.Notification{
+				AppID:       tarData.notificationReq.AppID,
+				TemplateID:  tarData.notificationReq.TemplateID,
+				ContactInfo: *nt.ContactInfo,
+				Title:       tarData.notificationReq.Title,
+				Body:        bodyTemplate.Fill(tarData.target.Placeholders),
 			}
-			notificationType.SendFunc(&simpleNotification)
+
+			status := nt.SendFunc(&notification)
+			if status != util.StatusSuccess {
+				conHandler.errorsChan <- fmt.Errorf("Failed to send message for target %d for %s", tarData.index, *nt.ContactInfo)
+				return
+			}
+
+			status = n.notificationRepo.SaveNotification(&notification)
+			if status != util.StatusSuccess {
+				conHandler.errorsChan <- fmt.Errorf("Failed to save sent message for target %d for %s", tarData.index, *nt.ContactInfo)
+				return
+			}
 		}
 	}
 }
 
 type notificationType struct {
-	TargetInfo *string
-	Body       *string
-	SendFunc   func(*dto.SimpleNotification) util.StatusCode
+	ContactInfo *string
+	Body        *string
+	SendFunc    func(*dto.Notification) util.StatusCode
+}
+
+type targetData struct {
+	index           int
+	notificationReq *dto.NotificationRequest
+	target          *dto.NotificationTarget
+	template        *dto.Template
+}
+
+type concurrentHandler struct {
+	wg         sync.WaitGroup
+	errorsChan chan error
 }

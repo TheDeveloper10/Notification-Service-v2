@@ -5,5 +5,5 @@ type Notification struct {
 	TemplateID  uint64
 	ContactInfo string
 	Title       string
-	Message     string
+	Body        string
 }

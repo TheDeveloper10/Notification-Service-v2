@@ -8,9 +8,9 @@ import (
 )
 
 type INotificationSender interface {
-	SendEmail(notification *dto.SimpleNotification) util.StatusCode
-	SendSMS(notification *dto.SimpleNotification) util.StatusCode
-	SendPush(notification *dto.SimpleNotification) util.StatusCode
+	SendEmail(notification *dto.Notification) util.StatusCode
+	SendSMS(notification *dto.Notification) util.StatusCode
+	SendPush(notification *dto.Notification) util.StatusCode
 }
 
 func NewBasicNotificationSenderRepository() INotificationSender {
