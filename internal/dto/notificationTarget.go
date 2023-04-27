@@ -8,10 +8,11 @@ import (
 )
 
 type NotificationTarget struct {
-	Email                *string           `json:"email"`
-	PhoneNumber          *string           `json:"phoneNumber"`
-	FCMRegistrationToken *string           `json:"fcmRegistrationToken"`
-	Placeholders         map[string]string `json:"placeholders"`
+	Email                *string `json:"email"`
+	PhoneNumber          *string `json:"phoneNumber"`
+	FCMRegistrationToken *string `json:"fcmRegistrationToken"`
+
+	Placeholders map[string]string `json:"placeholders"`
 }
 
 func (nt *NotificationTarget) Validate() error {

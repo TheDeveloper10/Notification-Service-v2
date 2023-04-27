@@ -16,7 +16,7 @@ func SetUpRESTV1(app *fiber.App) {
 
 	var (
 		templateSvc     = service.NewTemplateService(templateRepo)
-		notificationSvc = service.NewNotificationService()
+		notificationSvc = service.NewNotificationService(templateSvc)
 	)
 
 	var (

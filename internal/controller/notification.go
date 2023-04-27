@@ -3,12 +3,12 @@ package controller
 import (
 	"notification-service/internal/dto"
 	"notification-service/internal/service"
+	"notification-service/internal/util"
 
 	"github.com/gofiber/fiber/v2"
 )
 
 type Notification struct {
-	templateSvc     *service.Template
 	notificationSvc *service.Notification
 }
 
@@ -22,6 +22,17 @@ func (n *Notification) Send(c *fiber.Ctx) error {
 		return err
 	} else if err := body.Validate(); err != nil {
 		return err
+	}
+
+	failSpot, status := n.notificationSvc.Send(&body)
+	if failSpot == 0 {
+		return c.SendStatus(fiber.StatusCreated)
+	} else if failSpot == 1 {
+		if status == util.StatusNotFound {
+			return fiber.NewError(fiber.StatusNotFound, "Template not found")
+		} else {
+			return fiber.NewError(fiber.StatusInternalServerError, "Failed to get template")
+		}
 	}
 
 	return nil

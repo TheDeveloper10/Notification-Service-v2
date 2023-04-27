@@ -8,6 +8,8 @@ func NewTemplateService(templateRepo repository.ITemplate) *Template {
 	}
 }
 
-func NewNotificationService() *Notification {
-	return &Notification{}
+func NewNotificationService(templateSvc *Template) *Notification {
+	return &Notification{
+		templateSvc: templateSvc,
+	}
 }
