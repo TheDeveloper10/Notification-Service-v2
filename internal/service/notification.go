@@ -23,74 +23,43 @@ func (n *Notification) Send(notificationReq *dto.NotificationRequest) (uint8, ut
 	template.Body.Fill(notificationReq.Placeholders)
 	wg := sync.WaitGroup{}
 
+	wg.Add(len(notificationReq.Targets))
+
 	for _, target := range notificationReq.Targets {
-		if target.Email != nil && template.Body.Email != nil {
-			go n.handleEmailTarget(notificationReq, &target, template, &wg)
-		}
-
-		if target.PhoneNumber != nil && template.Body.SMS != nil {
-			go n.handleSMSTarget(notificationReq, &target, template, &wg)
-		}
-
-		if target.FCMRegistrationToken != nil && template.Body.Push != nil {
-			go n.handlePushTarget(notificationReq, &target, template, &wg)
-		}
+		go n.handleTarget(notificationReq, &target, template, &wg)
 	}
 
 	wg.Wait()
 	return 0, util.StatusSuccess
 }
 
-func (n *Notification) handleEmailTarget(
+func (n *Notification) handleTarget(
 	notificationReq *dto.NotificationRequest,
 	target *dto.NotificationTarget,
 	template *dto.Template,
 	wg *sync.WaitGroup) {
-	wg.Add(1)
 	defer wg.Done()
 
-	bodyTemplate := util.TemplateString(*template.Body.Email)
+	for _, notificationType := range []notificationType{
+		{TargetInfo: target.Email, Body: template.Body.Email, SendFunc: n.notificationSenderRepo.SendEmail},
+		{TargetInfo: target.PhoneNumber, Body: template.Body.SMS, SendFunc: n.notificationSenderRepo.SendSMS},
+		{TargetInfo: target.FCMRegistrationToken, Body: template.Body.Push, SendFunc: n.notificationSenderRepo.SendPush},
+	} {
+		if notificationType.TargetInfo != nil && notificationType.Body != nil {
+			bodyTemplate := util.TemplateString(*notificationType.Body)
 
-	simpleNotification := dto.SimpleNotification{
-		ContactInfo: *target.Email,
-		Title:       notificationReq.Title,
-		Body:        bodyTemplate.Fill(target.Placeholders),
+			simpleNotification := dto.SimpleNotification{
+				ContactInfo: *notificationType.TargetInfo,
+				Title:       notificationReq.Title,
+				Body:        bodyTemplate.Fill(target.Placeholders),
+			}
+			notificationType.SendFunc(&simpleNotification)
+		}
 	}
-	n.notificationSenderRepo.SendEmail(&simpleNotification)
 }
 
-func (n *Notification) handleSMSTarget(
-	notificationReq *dto.NotificationRequest,
-	target *dto.NotificationTarget,
-	template *dto.Template,
-	wg *sync.WaitGroup) {
-	wg.Add(1)
-	defer wg.Done()
-
-	bodyTemplate := util.TemplateString(*template.Body.SMS)
-
-	simpleNotification := dto.SimpleNotification{
-		ContactInfo: *target.PhoneNumber,
-		Title:       notificationReq.Title,
-		Body:        bodyTemplate.Fill(target.Placeholders),
-	}
-	n.notificationSenderRepo.SendSMS(&simpleNotification)
-}
-
-func (n *Notification) handlePushTarget(
-	notificationReq *dto.NotificationRequest,
-	target *dto.NotificationTarget,
-	template *dto.Template,
-	wg *sync.WaitGroup) {
-	wg.Add(1)
-	defer wg.Done()
-
-	bodyTemplate := util.TemplateString(*template.Body.Push)
-
-	simpleNotification := dto.SimpleNotification{
-		ContactInfo: *target.FCMRegistrationToken,
-		Title:       notificationReq.Title,
-		Body:        bodyTemplate.Fill(target.Placeholders),
-	}
-	n.notificationSenderRepo.SendPush(&simpleNotification)
+type notificationType struct {
+	TargetInfo *string
+	Body       *string
+	SendFunc   func(*dto.SimpleNotification) util.StatusCode
 }
