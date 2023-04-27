@@ -8,6 +8,6 @@ import (
 type NotificationRepository struct {
 }
 
-func (nr *NotificationRepository) SaveNotification(notification *dto.Notification) util.StatusCode {
-	return util.StatusSuccess
+func (nr *NotificationRepository) SaveNotification(notification *dto.Notification) (uint64, util.StatusCode) {
+	return 0, util.StatusSuccess
 }

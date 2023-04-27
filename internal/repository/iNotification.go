@@ -8,7 +8,7 @@ import (
 )
 
 type INotification interface {
-	SaveNotification(notification *dto.Notification) util.StatusCode
+	SaveNotification(notification *dto.Notification) (uint64, util.StatusCode)
 	// GetBulk
 }
 

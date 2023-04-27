@@ -91,7 +91,7 @@ func (n *Notification) handleTarget(tarData *targetData, se *syncErrors) {
 			return
 		}
 
-		status = n.notificationRepo.SaveNotification(&notification)
+		_, status = n.notificationRepo.SaveNotification(&notification)
 		if status != util.StatusSuccess {
 			se.addError(fmt.Errorf("Failed to save sent message for target %d for %s", tarData.index, *nt.ContactInfo))
 			return
