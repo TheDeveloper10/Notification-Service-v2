@@ -11,12 +11,14 @@ import (
 
 func SetUpRESTV1(app *fiber.App) {
 	var (
-		templateRepo = repository.NewBasicTemplateRepository()
+		templateRepo           = repository.NewBasicTemplateRepository()
+		notificationRepo       = repository.NewBasicNotificationRepository()
+		notificationSenderRepo = repository.NewBasicNotificationSenderRepository()
 	)
 
 	var (
 		templateSvc     = service.NewTemplateService(templateRepo)
-		notificationSvc = service.NewNotificationService(templateSvc)
+		notificationSvc = service.NewNotificationService(templateSvc, notificationSenderRepo, notificationRepo)
 	)
 
 	var (

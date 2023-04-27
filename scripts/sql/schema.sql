@@ -14,16 +14,16 @@ CREATE TABLE IF NOT EXISTS `templates`(
 CREATE TABLE IF NOT EXISTS `notifications`(
     `id`                   BIGINT UNSIGNED PRIMARY KEY AUTO_INCREMENT,
     `appId`                VARCHAR(16)     NOT NULL,
-    `templateId`           INTEGER         NOT NULL,
+    `templateId`           BIGINT UNSIGNED NOT NULL,
     `contactInfo`          VARCHAR(168),
     `title`                VARCHAR(128)    NOT NULL,
     `message`              VARCHAR(2048)   NOT NULL,
-    `sentTime`             INTEGER         NOT NULL DEFAULT(UNIX_TIMESTAMP())
+    `sentTime`             TIMESTAMP       NOT NULL DEFAULT(CURRENT_TIMESTAMP())
 );
 
 CREATE TABLE IF NOT EXISTS `clients`(
-    `id`           VARCHAR(16)  PRIMARY KEY,
-    `secret`       VARCHAR(128) NOT NULL,
-    `permissions`  INTEGER      NOT NULL,
-    `creationTime` INTEGER      NOT NULL DEFAULT(UNIX_TIMESTAMP())
+    `id`           VARCHAR(16)      PRIMARY KEY,
+    `secret`       VARCHAR(128)     NOT NULL,
+    `permissions`  INTEGER UNSIGNED NOT NULL,
+    `creationTime` TIMESTAMP        NOT NULL DEFAULT(CURRENT_TIMESTAMP())
 );

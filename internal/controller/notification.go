@@ -17,7 +17,7 @@ func (n *Notification) GetBulk(c *fiber.Ctx) error {
 }
 
 func (n *Notification) Send(c *fiber.Ctx) error {
-	body := dto.Notification{}
+	body := dto.NotificationRequest{}
 	if err := c.BodyParser(&body); err != nil {
 		return err
 	} else if err := body.Validate(); err != nil {
