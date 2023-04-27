@@ -55,34 +55,34 @@ func (n *Notification) handleTarget(tarData *targetData, se *syncErrors) {
 	notificationTypes := []notificationType{
 		{
 			ContactInfo: tarData.target.Email,
-			Body:        tarData.template.Body.Email,
+			Message:     tarData.template.Body.Email,
 			SendFunc:    n.notificationSenderRepo.SendEmail,
 		},
 		{
 			ContactInfo: tarData.target.PhoneNumber,
-			Body:        tarData.template.Body.SMS,
+			Message:     tarData.template.Body.SMS,
 			SendFunc:    n.notificationSenderRepo.SendSMS,
 		},
 		{
 			ContactInfo: tarData.target.FCMRegistrationToken,
-			Body:        tarData.template.Body.Push,
+			Message:     tarData.template.Body.Push,
 			SendFunc:    n.notificationSenderRepo.SendPush,
 		},
 	}
 
 	for _, nt := range notificationTypes {
-		if nt.ContactInfo == nil || nt.Body == nil {
+		if nt.ContactInfo == nil || nt.Message == nil {
 			continue
 		}
 
-		bodyTemplate := util.TemplateString(*nt.Body)
+		msgTemplate := util.TemplateString(*nt.Message)
 
 		notification := dto.Notification{
 			AppID:       tarData.notificationReq.AppID,
 			TemplateID:  tarData.notificationReq.TemplateID,
 			ContactInfo: *nt.ContactInfo,
 			Title:       tarData.notificationReq.Title,
-			Body:        bodyTemplate.Fill(tarData.target.Placeholders),
+			Message:     msgTemplate.Fill(tarData.target.Placeholders),
 		}
 
 		status := nt.SendFunc(&notification)

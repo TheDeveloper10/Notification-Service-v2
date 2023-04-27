@@ -8,11 +8,7 @@ import (
 )
 
 func Error(c *fiber.Ctx, err error) error {
-	if _, ok := err.(*json.SyntaxError); ok {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": "Invalid JSON format",
-		})
-	} else if e, ok := err.(*fiber.Error); ok {
+	if e, ok := err.(*fiber.Error); ok {
 		if e.Code == fiber.StatusUnprocessableEntity {
 			return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{
 				"error": "Unprocessable Entity",
@@ -26,6 +22,10 @@ func Error(c *fiber.Ctx, err error) error {
 				"error": e.Message,
 			})
 		}
+	} else if _, ok := err.(*json.SyntaxError); ok {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": "Invalid JSON format",
+		})
 	}
 
 	util.Logger.Info().Msg(err.Error())

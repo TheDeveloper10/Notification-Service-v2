@@ -8,7 +8,7 @@ import (
 
 type notificationType struct {
 	ContactInfo *string
-	Body        *string
+	Message     *string
 	SendFunc    func(*dto.Notification) util.StatusCode
 }
 
