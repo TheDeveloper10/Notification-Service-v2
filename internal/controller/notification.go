@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"notification-service/internal/dto"
 	"notification-service/internal/service"
 
 	"github.com/gofiber/fiber/v2"
@@ -16,5 +17,12 @@ func (n *Notification) GetBulk(c *fiber.Ctx) error {
 }
 
 func (n *Notification) Send(c *fiber.Ctx) error {
+	body := dto.Notification{}
+	if err := c.BodyParser(&body); err != nil {
+		return err
+	} else if err := body.Validate(); err != nil {
+		return err
+	}
+
 	return nil
 }
