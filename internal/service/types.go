@@ -20,12 +20,21 @@ type targetData struct {
 }
 
 type syncErrors struct {
-	wg          sync.WaitGroup
-	errorsChan  chan error
-	errorsCount int
+	wg       sync.WaitGroup
+	errorsMu sync.Mutex
+	errors   []error
 }
 
-func (se *syncErrors) pushError(err error) {
-	se.errorsChan <- err
-	se.errorsCount++
+func (se *syncErrors) addError(err error) {
+	se.errorsMu.Lock()
+	se.errors = append(se.errors, err)
+	se.errorsMu.Unlock()
+}
+
+func newSyncErrors() *syncErrors {
+	return &syncErrors{
+		wg:       sync.WaitGroup{},
+		errorsMu: sync.Mutex{},
+		errors:   []error{},
+	}
 }

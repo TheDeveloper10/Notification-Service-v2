@@ -6,5 +6,6 @@ const (
 	StatusSuccess StatusCode = iota
 	StatusNotFound
 	StatusDuplicate
+	StatusInternal
 	StatusError
 )

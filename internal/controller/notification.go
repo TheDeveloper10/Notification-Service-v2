@@ -3,6 +3,7 @@ package controller
 import (
 	"notification-service/internal/dto"
 	"notification-service/internal/service"
+	"notification-service/internal/util"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -23,9 +24,13 @@ func (n *Notification) Send(c *fiber.Ctx) error {
 		return err
 	}
 
-	errs := n.notificationSvc.Send(&body)
-	if errs == nil || len(errs) <= 0 {
+	errs, status := n.notificationSvc.Send(&body)
+	if status == util.StatusSuccess {
 		return c.SendStatus(fiber.StatusCreated)
+	} else if status == util.StatusNotFound {
+		return fiber.NewError(fiber.StatusNotFound, errs[0].Error())
+	} else if status == util.StatusInternal {
+		return fiber.NewError(fiber.StatusInternalServerError, errs[0].Error())
 	}
 
 	return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{

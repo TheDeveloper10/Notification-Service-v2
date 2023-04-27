@@ -6,7 +6,6 @@ import (
 	"notification-service/internal/dto"
 	"notification-service/internal/repository"
 	"notification-service/internal/util"
-	"sync"
 )
 
 type Notification struct {
@@ -16,44 +15,38 @@ type Notification struct {
 	notificationRepo       repository.INotification
 }
 
-func (n *Notification) Send(notificationReq *dto.NotificationRequest) []error {
+func (n *Notification) Send(notificationReq *dto.NotificationRequest) ([]error, util.StatusCode) {
 	template, status := n.templateSvc.GetTemplateByID(notificationReq.TemplateID)
 	if status == util.StatusNotFound {
-		return []error{errors.New("Template not found")}
+		return []error{errors.New("Template not found")}, util.StatusNotFound
 	} else if status != util.StatusSuccess {
-		return []error{errors.New("Failed to get template")}
+		return []error{errors.New("Failed to get template")}, util.StatusInternal
 	}
 
 	template.Body.Fill(notificationReq.Placeholders)
 
-	se := syncErrors{
-		wg:         sync.WaitGroup{},
-		errorsChan: make(chan error),
-	}
-	defer close(se.errorsChan)
+	se := newSyncErrors()
 
 	se.wg.Add(len(notificationReq.Placeholders))
 
 	for index, target := range notificationReq.Targets {
-		go n.handleTarget(
-			&targetData{
-				index:           index,
-				target:          &target,
-				notificationReq: notificationReq,
-				template:        template,
-			},
-			&se,
-		)
+		td := &targetData{
+			index:           index,
+			target:          &target,
+			notificationReq: notificationReq,
+			template:        template,
+		}
+
+		go n.handleTarget(td, se)
 	}
 
 	se.wg.Wait()
 
-	errors := make([]error, 0)
-	for err := range se.errorsChan {
-		errors = append(errors, err)
+	if se.errors == nil || len(se.errors) <= 0 {
+		return nil, util.StatusSuccess
 	}
 
-	return errors
+	return se.errors, util.StatusError
 }
 
 func (n *Notification) handleTarget(tarData *targetData, se *syncErrors) {
@@ -94,13 +87,13 @@ func (n *Notification) handleTarget(tarData *targetData, se *syncErrors) {
 
 		status := nt.SendFunc(&notification)
 		if status != util.StatusSuccess {
-			se.pushError(fmt.Errorf("Failed to send message for target %d for %s", tarData.index, *nt.ContactInfo))
+			se.addError(fmt.Errorf("Failed to send message for target %d for %s", tarData.index, *nt.ContactInfo))
 			return
 		}
 
 		status = n.notificationRepo.SaveNotification(&notification)
 		if status != util.StatusSuccess {
-			se.pushError(fmt.Errorf("Failed to save sent message for target %d for %s", tarData.index, *nt.ContactInfo))
+			se.addError(fmt.Errorf("Failed to save sent message for target %d for %s", tarData.index, *nt.ContactInfo))
 			return
 		}
 	}

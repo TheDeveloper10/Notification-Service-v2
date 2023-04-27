@@ -18,13 +18,13 @@ func (tr *TemplateRepository) CreateTemplate(template *dto.Template) (uint64, ut
 	)
 	if err != nil {
 		util.Logger.Error().Msg(err.Error())
-		return 0, util.StatusError
+		return 0, util.StatusInternal
 	}
 
 	id, err := result.LastInsertId()
 	if err != nil {
 		util.Logger.Error().Msg(err.Error())
-		return 0, util.StatusError
+		return 0, util.StatusInternal
 	}
 
 	util.Logger.Error().Msgf("Created template %d", id)
@@ -38,13 +38,13 @@ func (tr *TemplateRepository) UpdateTemplate(templateID uint64, template *dto.Te
 	)
 	if err != nil {
 		util.Logger.Error().Msg(err.Error())
-		return util.StatusError
+		return util.StatusInternal
 	}
 
 	affectedRows, err := result.RowsAffected()
 	if err != nil {
 		util.Logger.Error().Msg(err.Error())
-		return util.StatusError
+		return util.StatusInternal
 	} else if affectedRows <= 0 {
 		util.Logger.Error().Msgf("Template %d not found", templateID)
 		return util.StatusNotFound
@@ -61,7 +61,7 @@ func (tr *TemplateRepository) GetTemplateByID(templateID uint64) (*dto.Template,
 	)
 	if err != nil {
 		util.Logger.Error().Msg(err.Error())
-		return nil, util.StatusError
+		return nil, util.StatusInternal
 	}
 	defer rows.Close()
 
@@ -69,7 +69,7 @@ func (tr *TemplateRepository) GetTemplateByID(templateID uint64) (*dto.Template,
 		template, err := tr.scanTemplate(rows)
 		if err != nil {
 			util.Logger.Error().Msg(err.Error())
-			return nil, util.StatusError
+			return nil, util.StatusInternal
 		}
 
 		util.Logger.Error().Msgf("Found template %d", templateID)
@@ -92,7 +92,7 @@ func (tr *TemplateRepository) GetBulkTemplates(filter *dto.TemplateBulkFilter) (
 	rows, err := client.Database.Query(query)
 	if err != nil {
 		util.Logger.Error().Msg(err.Error())
-		return nil, util.StatusError
+		return nil, util.StatusInternal
 	}
 	defer rows.Close()
 
@@ -101,7 +101,7 @@ func (tr *TemplateRepository) GetBulkTemplates(filter *dto.TemplateBulkFilter) (
 		template, err := tr.scanTemplate(rows)
 		if err != nil {
 			util.Logger.Error().Msg(err.Error())
-			return nil, util.StatusError
+			return nil, util.StatusInternal
 		}
 
 		templates = append(templates, *template)
@@ -118,13 +118,13 @@ func (tr *TemplateRepository) DeleteTemplate(templateID uint64) util.StatusCode 
 	)
 	if err != nil {
 		util.Logger.Error().Msg(err.Error())
-		return util.StatusError
+		return util.StatusInternal
 	}
 
 	affectedRows, err := result.RowsAffected()
 	if err != nil {
 		util.Logger.Error().Msg(err.Error())
-		return util.StatusError
+		return util.StatusInternal
 	} else if affectedRows <= 0 {
 		util.Logger.Error().Msgf("Template %d not found", templateID)
 		return util.StatusNotFound
