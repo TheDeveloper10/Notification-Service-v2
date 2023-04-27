@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"fmt"
 	"notification-service/internal/dto"
 	"notification-service/internal/repository"
@@ -15,20 +16,23 @@ type Notification struct {
 	notificationRepo       repository.INotification
 }
 
-func (n *Notification) Send(notificationReq *dto.NotificationRequest) (uint8, util.StatusCode) {
+func (n *Notification) Send(notificationReq *dto.NotificationRequest) []error {
 	template, status := n.templateSvc.GetTemplateByID(notificationReq.TemplateID)
-	if status != util.StatusSuccess {
-		return 1, status
+	if status == util.StatusNotFound {
+		return []error{errors.New("Template not found")}
+	} else if status != util.StatusSuccess {
+		return []error{errors.New("Failed to get template")}
 	}
 
 	template.Body.Fill(notificationReq.Placeholders)
 
-	conHandler := concurrentHandler{
+	se := syncErrors{
 		wg:         sync.WaitGroup{},
 		errorsChan: make(chan error),
 	}
+	defer close(se.errorsChan)
 
-	conHandler.wg.Add(len(notificationReq.Placeholders))
+	se.wg.Add(len(notificationReq.Placeholders))
 
 	for index, target := range notificationReq.Targets {
 		go n.handleTarget(
@@ -38,17 +42,22 @@ func (n *Notification) Send(notificationReq *dto.NotificationRequest) (uint8, ut
 				notificationReq: notificationReq,
 				template:        template,
 			},
-			&conHandler,
+			&se,
 		)
 	}
 
-	conHandler.wg.Wait()
+	se.wg.Wait()
 
-	return 0, util.StatusSuccess
+	errors := make([]error, 0)
+	for err := range se.errorsChan {
+		errors = append(errors, err)
+	}
+
+	return errors
 }
 
-func (n *Notification) handleTarget(tarData *targetData, conHandler *concurrentHandler) {
-	defer conHandler.wg.Done()
+func (n *Notification) handleTarget(tarData *targetData, se *syncErrors) {
+	defer se.wg.Done()
 
 	notificationTypes := []notificationType{
 		{
@@ -69,46 +78,30 @@ func (n *Notification) handleTarget(tarData *targetData, conHandler *concurrentH
 	}
 
 	for _, nt := range notificationTypes {
-		if nt.ContactInfo != nil && nt.Body != nil {
-			bodyTemplate := util.TemplateString(*nt.Body)
+		if nt.ContactInfo == nil || nt.Body == nil {
+			continue
+		}
 
-			notification := dto.Notification{
-				AppID:       tarData.notificationReq.AppID,
-				TemplateID:  tarData.notificationReq.TemplateID,
-				ContactInfo: *nt.ContactInfo,
-				Title:       tarData.notificationReq.Title,
-				Body:        bodyTemplate.Fill(tarData.target.Placeholders),
-			}
+		bodyTemplate := util.TemplateString(*nt.Body)
 
-			status := nt.SendFunc(&notification)
-			if status != util.StatusSuccess {
-				conHandler.errorsChan <- fmt.Errorf("Failed to send message for target %d for %s", tarData.index, *nt.ContactInfo)
-				return
-			}
+		notification := dto.Notification{
+			AppID:       tarData.notificationReq.AppID,
+			TemplateID:  tarData.notificationReq.TemplateID,
+			ContactInfo: *nt.ContactInfo,
+			Title:       tarData.notificationReq.Title,
+			Body:        bodyTemplate.Fill(tarData.target.Placeholders),
+		}
 
-			status = n.notificationRepo.SaveNotification(&notification)
-			if status != util.StatusSuccess {
-				conHandler.errorsChan <- fmt.Errorf("Failed to save sent message for target %d for %s", tarData.index, *nt.ContactInfo)
-				return
-			}
+		status := nt.SendFunc(&notification)
+		if status != util.StatusSuccess {
+			se.pushError(fmt.Errorf("Failed to send message for target %d for %s", tarData.index, *nt.ContactInfo))
+			return
+		}
+
+		status = n.notificationRepo.SaveNotification(&notification)
+		if status != util.StatusSuccess {
+			se.pushError(fmt.Errorf("Failed to save sent message for target %d for %s", tarData.index, *nt.ContactInfo))
+			return
 		}
 	}
-}
-
-type notificationType struct {
-	ContactInfo *string
-	Body        *string
-	SendFunc    func(*dto.Notification) util.StatusCode
-}
-
-type targetData struct {
-	index           int
-	notificationReq *dto.NotificationRequest
-	target          *dto.NotificationTarget
-	template        *dto.Template
-}
-
-type concurrentHandler struct {
-	wg         sync.WaitGroup
-	errorsChan chan error
 }
