@@ -12,6 +12,9 @@ func NewTemplateController(templateSvc *service.Template) *Template {
 	}
 }
 
-func NewNotificationController() *Notification {
-	return &Notification{}
+func NewNotificationController(templateSvc *service.Template, notificationSvc *service.Notification) *Notification {
+	return &Notification{
+		templateSvc:     templateSvc,
+		notificationSvc: notificationSvc,
+	}
 }

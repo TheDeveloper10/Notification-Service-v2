@@ -6,6 +6,8 @@ import (
 	"notification-service/internal/util"
 )
 
+// TODO: add templates cache?
+
 type Template struct {
 	templateRepo repository.ITemplate
 }

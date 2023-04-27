@@ -1,8 +1,14 @@
 package controller
 
-import "github.com/gofiber/fiber/v2"
+import (
+	"notification-service/internal/service"
+
+	"github.com/gofiber/fiber/v2"
+)
 
 type Notification struct {
+	templateSvc     *service.Template
+	notificationSvc *service.Notification
 }
 
 func (n *Notification) GetBulk(c *fiber.Ctx) error {

@@ -7,3 +7,7 @@ func NewTemplateService(templateRepo repository.ITemplate) *Template {
 		templateRepo: templateRepo,
 	}
 }
+
+func NewNotificationService() *Notification {
+	return &Notification{}
+}
