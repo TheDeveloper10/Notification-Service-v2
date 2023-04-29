@@ -21,7 +21,7 @@ func main() {
 	)
 
 	// HTTP REST V1
-	if config.Master.Service.APIs.Has(config.HTTP_REST_V1) {
+	if config.Master.Service.APIs.Has(config.HTTP_REST_V1_API) {
 		hasHTTPHandler = true
 
 		api.SetUpRESTV1(fiberApp)
