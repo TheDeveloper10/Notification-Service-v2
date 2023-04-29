@@ -1,5 +1,11 @@
 package client
 
+import "notification-service/internal/config"
+
+func newEmptyMailClientFromConfig(conf *config.MailConfig) *emptyMail {
+	return &emptyMail{}
+}
+
 type emptyMail struct {
 }
 
