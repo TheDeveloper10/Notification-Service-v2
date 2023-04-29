@@ -9,7 +9,7 @@ import (
 
 type INotification interface {
 	SaveNotification(notification *dto.Notification) (uint64, util.StatusCode)
-	// GetBulk
+	GetBulkNotifications(filter *dto.NotificationBulkFilter) ([]dto.Notification, util.StatusCode)
 }
 
 func NewBasicNotificationRepository() INotification {

@@ -13,7 +13,17 @@ type Notification struct {
 }
 
 func (n *Notification) GetBulk(c *fiber.Ctx) error {
-	return nil
+	filter := dto.NotificationBulkFilter{}
+	if err := filter.Fill(c); err != nil {
+		return err
+	}
+
+	notifications, status := n.notificationSvc.GetBulkNotifications(&filter)
+	if status != util.StatusSuccess {
+		return fiber.NewError(fiber.StatusInternalServerError, "Failed to get notifications")
+	}
+
+	return c.Status(fiber.StatusOK).JSON(notifications)
 }
 
 func (n *Notification) Send(c *fiber.Ctx) error {
@@ -24,7 +34,7 @@ func (n *Notification) Send(c *fiber.Ctx) error {
 		return err
 	}
 
-	errs, status := n.notificationSvc.Send(&body)
+	errs, status := n.notificationSvc.SendNotifications(&body)
 	if status == util.StatusSuccess {
 		return c.SendStatus(fiber.StatusCreated)
 	} else if status == util.StatusNotFound {

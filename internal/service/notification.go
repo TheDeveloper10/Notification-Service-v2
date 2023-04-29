@@ -15,7 +15,7 @@ type Notification struct {
 	notificationRepo       repository.INotification
 }
 
-func (n *Notification) Send(notificationReq *dto.NotificationRequest) ([]error, util.StatusCode) {
+func (n *Notification) SendNotifications(notificationReq *dto.NotificationRequest) ([]error, util.StatusCode) {
 	template, status := n.templateSvc.GetTemplateByID(notificationReq.TemplateID)
 	if status == util.StatusNotFound {
 		return []error{errors.New("Template not found")}, util.StatusNotFound
@@ -97,4 +97,8 @@ func (n *Notification) handleTarget(tarData *targetData, se *syncErrors) {
 			return
 		}
 	}
+}
+
+func (n *Notification) GetBulkNotifications(filter *dto.NotificationBulkFilter) ([]dto.Notification, util.StatusCode) {
+	return n.notificationRepo.GetBulkNotifications(filter)
 }

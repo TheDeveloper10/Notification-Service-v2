@@ -20,14 +20,22 @@ func (tbf *TemplateBulkFilter) Fill(c *fiber.Ctx) error {
 		perPageNum, err := strconv.ParseUint(perPageStr, 10, 32)
 		if err == nil {
 			tbf.PerPage = uint32(perPageNum)
+		} else {
+			return fiber.NewError(fiber.StatusBadRequest, "Per Page must be a positive integer")
+		}
+
+		if perPageNum > 100 {
+			tbf.PerPage = 100
 		}
 	}
 
-	LastTemplateIDStr := c.Query("lastTemplateId")
-	if LastTemplateIDStr != "" {
-		LastTemplateIDNum, err := strconv.ParseUint(LastTemplateIDStr, 10, 32)
-		if err == nil && LastTemplateIDNum > 0 {
-			tbf.LastTemplateID = LastTemplateIDNum
+	lastTemplateIDStr := c.Query("lastTemplateId")
+	if lastTemplateIDStr != "" {
+		lastTemplateIDNum, err := strconv.ParseUint(lastTemplateIDStr, 10, 32)
+		if err == nil {
+			tbf.LastTemplateID = lastTemplateIDNum
+		} else {
+			return fiber.NewError(fiber.StatusBadRequest, "Last Template ID must be a positive integer")
 		}
 	}
 
