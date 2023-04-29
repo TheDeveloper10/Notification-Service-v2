@@ -6,6 +6,8 @@ type MasterConfig struct {
 	Service  ServiceConfig  `yaml:"service"`
 	HTTP     HTTPConfig     `yaml:"http"`
 	Database DatabaseConfig `yaml:"database"`
+	Mail     MailConfig     `yaml:"mail"`
+	SMS      SMSConfig      `yaml:"sms"`
 }
 
 type ServiceConfig struct {
@@ -24,5 +26,18 @@ type DatabaseConfig struct {
 	Password string `yaml:"password"`
 	Host     string `yaml:"host"`
 	Name     string `yaml:"name"`
-	PoolSize int    `yaml:"pool_size"`
+	PoolSize uint16 `yaml:"pool_size"`
+}
+
+type MailConfig struct {
+	FromEmail    string `yaml:"from_email"`
+	FromPassword string `yaml:"from_password"`
+	Host         string `yaml:"host"`
+	Port         uint16 `yaml:"port"`
+}
+
+type SMSConfig struct {
+	MessagingServiceSID string `yaml:"messaging_service_sid"`
+	AccountSID          string `yaml:"account_sid"`
+	AuthToken           string `yaml:"authentication_token"`
 }

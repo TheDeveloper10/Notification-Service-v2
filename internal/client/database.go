@@ -21,8 +21,8 @@ func InitDatabaseClient(conf *config.DatabaseConfig) *sql.DB {
 
 	c.SetConnMaxIdleTime(5 * time.Second)
 	c.SetConnMaxLifetime(0)
-	c.SetMaxIdleConns(conf.PoolSize)
-	c.SetMaxOpenConns(conf.PoolSize)
+	c.SetMaxIdleConns(int(conf.PoolSize))
+	c.SetMaxOpenConns(int(conf.PoolSize))
 
 	return c
 }

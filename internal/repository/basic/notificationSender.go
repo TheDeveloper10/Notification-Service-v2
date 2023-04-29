@@ -10,7 +10,7 @@ type NotificationSenderRepository struct {
 }
 
 func (nsr *NotificationSenderRepository) SendEmail(notification *dto.Notification) util.StatusCode {
-	if !config.Master.Service.NotificationTypes.Has(config.NOTIFICATION_TYPE_EMAIL) {
+	if !config.Master.Service.NotificationTypes.Has(config.NOTIFICATION_TYPE_MAIL) {
 		return util.StatusSuccess
 	}
 

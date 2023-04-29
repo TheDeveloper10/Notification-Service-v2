@@ -6,7 +6,7 @@ const (
 )
 
 const (
-	NOTIFICATION_TYPE_EMAIL = "email"
-	NOTIFICATION_TYPE_SMS   = "sms"
-	NOTIFICATION_TYPE_PUSH  = "push"
+	NOTIFICATION_TYPE_MAIL = "mail"
+	NOTIFICATION_TYPE_SMS  = "sms"
+	NOTIFICATION_TYPE_PUSH = "push"
 )
