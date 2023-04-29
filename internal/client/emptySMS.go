@@ -1,8 +1,6 @@
 package client
 
-import "notification-service/internal/config"
-
-func newEmptySMSClientFromConfig(conf *config.SMSConfig) *emptySMS {
+func newEmptySMSClientFromConfig() *emptySMS {
 	return &emptySMS{}
 }
 

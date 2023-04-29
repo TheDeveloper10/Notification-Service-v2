@@ -8,7 +8,7 @@ type ISMS interface {
 
 func InitSMSClient(conf *config.SMSConfig, empty bool) ISMS {
 	if empty {
-		return newEmptySMSClientFromConfig(conf)
+		return newEmptySMSClientFromConfig()
 	} else {
 		return newRealSMSClientFromConfig(conf)
 	}

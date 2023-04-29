@@ -11,7 +11,7 @@ type IMail interface {
 
 func InitMailClient(conf *config.MailConfig, empty bool) IMail {
 	if empty {
-		return newEmptyMailClientFromConfig(conf)
+		return newEmptyMailClientFromConfig()
 	} else {
 		return newRealMailClientFromConfig(conf)
 	}
