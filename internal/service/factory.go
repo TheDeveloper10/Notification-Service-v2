@@ -1,10 +1,16 @@
 package service
 
-import "notification-service/internal/repository"
+import (
+	"notification-service/internal/dto"
+	"notification-service/internal/repository"
+	"sync"
+)
 
 func NewTemplateService(templateRepo repository.ITemplate) *Template {
 	return &Template{
 		templateRepo: templateRepo,
+		cache:        map[uint64]*dto.Template{},
+		cacheMu:      sync.RWMutex{},
 	}
 }
 

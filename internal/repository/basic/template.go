@@ -72,7 +72,7 @@ func (tr *TemplateRepository) GetTemplateByID(templateID uint64) (*dto.Template,
 			return nil, util.StatusInternal
 		}
 
-		util.Logger.Error().Msgf("Found template %d", templateID)
+		util.Logger.Info().Msgf("Found template %d", templateID)
 		return template, util.StatusSuccess
 	}
 
