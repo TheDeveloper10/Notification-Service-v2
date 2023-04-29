@@ -19,4 +19,9 @@ func InitClients() {
 		&config.Master.Mail,
 		!config.Master.Service.NotificationTypes.Has(config.NOTIFICATION_TYPE_MAIL),
 	)
+
+	SMS = InitSMSClient(
+		&config.Master.SMS,
+		!config.Master.Service.NotificationTypes.Has(config.NOTIFICATION_TYPE_SMS),
+	)
 }
