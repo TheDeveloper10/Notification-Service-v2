@@ -8,6 +8,8 @@ import (
 var (
 	Database *sql.DB
 	Mail     IMail
+	SMS      ISMS
+	Push     IPush
 )
 
 func InitClients() {
