@@ -17,11 +17,16 @@ func InitClients() {
 
 	Mail = InitMailClient(
 		&config.Master.Mail,
-		!config.Master.Service.NotificationTypes.Has(config.NOTIFICATION_TYPE_MAIL),
+		config.Master.Service.NotificationTypes.Has(config.NOTIFICATION_TYPE_MAIL),
 	)
 
 	SMS = InitSMSClient(
 		&config.Master.SMS,
-		!config.Master.Service.NotificationTypes.Has(config.NOTIFICATION_TYPE_SMS),
+		config.Master.Service.NotificationTypes.Has(config.NOTIFICATION_TYPE_SMS),
+	)
+
+	Push = InitPushClient(
+		config.FirebaseAdminSDKPath,
+		config.Master.Service.NotificationTypes.Has(config.NOTIFICATION_TYPE_PUSH),
 	)
 }

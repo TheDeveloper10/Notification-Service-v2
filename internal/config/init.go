@@ -1,7 +1,8 @@
 package config
 
 const (
-	serviceConfigPath = "config/service.yaml"
+	ServiceConfigPath    = "config/service.yaml"
+	FirebaseAdminSDKPath = "config/firebase-adminsdk.json"
 )
 
 var (
@@ -10,5 +11,5 @@ var (
 
 func InitConfigs() {
 	Master = &MasterConfig{}
-	loadYAML(serviceConfigPath, &Master)
+	loadYAML(ServiceConfigPath, &Master)
 }

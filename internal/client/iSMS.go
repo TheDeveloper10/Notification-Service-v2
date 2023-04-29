@@ -6,10 +6,10 @@ type ISMS interface {
 	SendSMS(title string, body string, to string) error
 }
 
-func InitSMSClient(conf *config.SMSConfig, empty bool) ISMS {
-	if empty {
-		return newEmptySMSClientFromConfig()
-	} else {
+func InitSMSClient(conf *config.SMSConfig, real bool) ISMS {
+	if real {
 		return newRealSMSClientFromConfig(conf)
+	} else {
+		return newEmptySMSClientFromConfig()
 	}
 }

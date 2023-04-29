@@ -9,10 +9,10 @@ type IMail interface {
 	MailSingle(subject string, message string, to string) error
 }
 
-func InitMailClient(conf *config.MailConfig, empty bool) IMail {
-	if empty {
-		return newEmptyMailClientFromConfig()
-	} else {
+func InitMailClient(conf *config.MailConfig, real bool) IMail {
+	if real {
 		return newRealMailClientFromConfig(conf)
+	} else {
+		return newEmptyMailClientFromConfig()
 	}
 }
