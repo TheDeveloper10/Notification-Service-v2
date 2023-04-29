@@ -35,7 +35,7 @@ func SetUpRESTV1(app *fiber.App) {
 	api.Post("/test", testCtrl.Post)
 
 	api.Get("/notifications", notificationCtrl.GetBulk)
-	api.Get("/notifications", notificationCtrl.Send)
+	api.Post("/notifications", notificationCtrl.Send)
 
 	api.Get("/templates", templateCtrl.GetBulk)
 	api.Post("/templates", templateCtrl.Create)

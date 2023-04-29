@@ -27,7 +27,7 @@ func (n *Notification) SendNotifications(notificationReq *dto.NotificationReques
 
 	se := newSyncErrors()
 
-	se.wg.Add(len(notificationReq.Placeholders))
+	se.wg.Add(len(notificationReq.Targets))
 
 	for index, target := range notificationReq.Targets {
 		td := &targetData{
