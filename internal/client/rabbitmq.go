@@ -44,7 +44,7 @@ type RabbitMQClient struct {
 }
 
 type RabbitMQRequests <-chan amqp.Delivery
-type RabbitMQHandler func(data []byte) (any, bool)
+type RabbitMQHandler func(*amqp.Delivery) (any, bool)
 
 func (rmq *RabbitMQClient) Close() {
 	rmq.channel.Close()
@@ -80,7 +80,7 @@ func (rmq *RabbitMQClient) handleRequests(requests RabbitMQRequests, handler Rab
 }
 
 func (rmq *RabbitMQClient) processRequest(request amqp.Delivery, handler RabbitMQHandler) {
-	resp, ack := handler(request.Body)
+	resp, ack := handler(&request)
 
 	if ack {
 		err := request.Ack(false)
