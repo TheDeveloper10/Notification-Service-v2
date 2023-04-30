@@ -2,6 +2,7 @@ package main
 
 import (
 	"notification-service/internal/api"
+	"notification-service/internal/api/middleware"
 	"notification-service/internal/client"
 	"notification-service/internal/config"
 	"notification-service/internal/util"
@@ -12,6 +13,7 @@ func main() {
 	// Initializations
 	config.InitConfigs()
 	client.InitClients()
+	middleware.InitMiddlewares()
 
 	// Handlers
 	var (

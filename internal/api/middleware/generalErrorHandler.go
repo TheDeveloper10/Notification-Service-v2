@@ -7,7 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-func Error(c *fiber.Ctx, err error) error {
+func GeneralErrorHandler(c *fiber.Ctx, err error) error {
 	if e, ok := err.(*fiber.Error); ok {
 		if e.Code == fiber.StatusUnprocessableEntity {
 			return c.Status(fiber.StatusUnprocessableEntity).JSON(fiber.Map{

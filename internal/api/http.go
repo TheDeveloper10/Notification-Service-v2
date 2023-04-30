@@ -8,6 +8,6 @@ import (
 
 func NewFiberApp() *fiber.App {
 	return fiber.New(fiber.Config{
-		ErrorHandler: middleware.Error,
+		ErrorHandler: middleware.GeneralErrorHandler,
 	})
 }

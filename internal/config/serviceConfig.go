@@ -14,6 +14,12 @@ type ServiceConfig struct {
 	APIs              util.Strings `yaml:"apis"`
 	NotificationTypes util.Strings `yaml:"notification_types"`
 	AllowedLanguages  util.Strings `yaml:"allowed_languages"`
+	Auth              AuthConfig   `yaml:"auth"`
+}
+
+type AuthConfig struct {
+	TokenSigningKey string `yaml:"token_signing_key"`
+	TokenExpiryTime uint32 `yaml:"token_expiry_time"`
 }
 
 type HTTPConfig struct {
