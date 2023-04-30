@@ -17,3 +17,7 @@ func NewNotificationController(notificationSvc *service.Notification) *Notificat
 		notificationSvc: notificationSvc,
 	}
 }
+
+func NewClientController() *Client {
+	return &Client{}
+}

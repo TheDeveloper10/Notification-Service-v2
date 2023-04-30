@@ -12,13 +12,13 @@ type Template struct {
 	templateSvc *service.Template
 }
 
-func (t *Template) GetBulk(c *fiber.Ctx) error {
+func (ctrl *Template) GetBulk(c *fiber.Ctx) error {
 	filter := dto.TemplateBulkFilter{}
 	if err := filter.Fill(c); err != nil {
 		return err
 	}
 
-	templates, status := t.templateSvc.GetBulkTemplates(&filter)
+	templates, status := ctrl.templateSvc.GetBulkTemplates(&filter)
 	if status != util.StatusSuccess {
 		return fiber.NewError(fiber.StatusInternalServerError, "Failed to get templates")
 	}
@@ -26,7 +26,7 @@ func (t *Template) GetBulk(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(templates)
 }
 
-func (t *Template) Create(c *fiber.Ctx) error {
+func (ctrl *Template) Create(c *fiber.Ctx) error {
 	body := dto.Template{}
 	if err := c.BodyParser(&body); err != nil {
 		return err
@@ -34,7 +34,7 @@ func (t *Template) Create(c *fiber.Ctx) error {
 		return err
 	}
 
-	id, status := t.templateSvc.CreateTemplate(&body)
+	id, status := ctrl.templateSvc.CreateTemplate(&body)
 	if status != util.StatusSuccess {
 		return fiber.NewError(fiber.StatusInternalServerError, "Failed to create template")
 	}
@@ -42,13 +42,13 @@ func (t *Template) Create(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"templateId": id})
 }
 
-func (t *Template) GetByID(c *fiber.Ctx) error {
+func (ctrl *Template) GetByID(c *fiber.Ctx) error {
 	tid := dto.TemplateID{}
 	if err := tid.Fill(c); err != nil {
 		return err
 	}
 
-	template, status := t.templateSvc.GetTemplateByID(tid.ID)
+	template, status := ctrl.templateSvc.GetTemplateByID(tid.ID)
 	if status == util.StatusNotFound {
 		return fiber.NewError(fiber.StatusNotFound, "Template not found")
 	} else if status != util.StatusSuccess {
@@ -58,7 +58,7 @@ func (t *Template) GetByID(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(template)
 }
 
-func (t *Template) ReplaceByID(c *fiber.Ctx) error {
+func (ctrl *Template) ReplaceByID(c *fiber.Ctx) error {
 	tid := dto.TemplateID{}
 	if err := tid.Fill(c); err != nil {
 		return err
@@ -71,7 +71,7 @@ func (t *Template) ReplaceByID(c *fiber.Ctx) error {
 		return err
 	}
 
-	status := t.templateSvc.UpdateTemplate(tid.ID, &body)
+	status := ctrl.templateSvc.UpdateTemplate(tid.ID, &body)
 	if status == util.StatusNotFound {
 		return fiber.NewError(fiber.StatusNotFound, "Template not found")
 	} else if status != util.StatusSuccess {
@@ -81,13 +81,13 @@ func (t *Template) ReplaceByID(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusOK)
 }
 
-func (t *Template) DeleteByID(c *fiber.Ctx) error {
+func (ctrl *Template) DeleteByID(c *fiber.Ctx) error {
 	tid := dto.TemplateID{}
 	if err := tid.Fill(c); err != nil {
 		return err
 	}
 
-	status := t.templateSvc.DeleteTemplate(tid.ID)
+	status := ctrl.templateSvc.DeleteTemplate(tid.ID)
 	if status == util.StatusNotFound {
 		return fiber.NewError(fiber.StatusNotFound, "Template not found")
 	} else if status != util.StatusSuccess {

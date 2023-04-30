@@ -25,6 +25,7 @@ func SetUpRESTV1(app *fiber.App) {
 		testCtrl         = controller.NewTestController()
 		templateCtrl     = controller.NewTemplateController(templateSvc)
 		notificationCtrl = controller.NewNotificationController(notificationSvc)
+		clientCtrl       = controller.NewClientController()
 	)
 
 	api := app.Group("/v1")
@@ -33,6 +34,9 @@ func SetUpRESTV1(app *fiber.App) {
 
 	api.Get("/test", testCtrl.Get)
 	api.Post("/test", testCtrl.Post)
+
+	api.Post("/clients", clientCtrl.New)
+	api.Post("/clients/token", clientCtrl.IssueToken)
 
 	api.Get("/notifications", middleware.Auth, notificationCtrl.GetBulk)
 	api.Post("/notifications", middleware.Auth, notificationCtrl.Send)

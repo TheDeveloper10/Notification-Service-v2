@@ -15,6 +15,8 @@ service:
     - "DA"
     - "CS"
   auth:
+    master_client_id: abcdefgh
+    master_client_secret: w3fmLYkxIybT23Uf4cC2CP8Y2VoPTDhwy5yO2BIh86dgEOS475ZZL7i5cd1efieG
     token_signing_key: 5kpyjfDATS2SleG4
     token_expiry_time: 300 # in seconds
 
