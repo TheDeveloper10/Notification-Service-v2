@@ -12,7 +12,7 @@ func GenerateString(length int) (string, error) {
 	if err != nil {
 		return "", err
 	}
-	fileName := hex.EncodeToString(randomName)
+	fileName := hex.EncodeToString(randomName)[:length]
 
 	return fileName, nil
 }

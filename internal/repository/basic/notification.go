@@ -35,7 +35,7 @@ func (nr *NotificationRepository) SaveNotification(notification *dto.Notificatio
 func (nr *NotificationRepository) GetBulkNotifications(filter *dto.NotificationBulkFilter) ([]dto.Notification, util.StatusCode) {
 	whereConditions := nr.whereConditionsFromFilter(filter)
 
-	query := "select id, appId, templateId, contactInfo, title, message, sentTime from notifications"
+	query := "select id, appId, templateId, contactInfo, title, message, unix_timestamp(sentTime) from notifications"
 	if len(whereConditions) > 0 {
 		query = query + " where " + strings.Join(whereConditions, " and ")
 	}
