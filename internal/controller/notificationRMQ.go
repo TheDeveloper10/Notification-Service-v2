@@ -32,3 +32,5 @@ func (ctrl *NotificationRMQ) Send(request *amqp.Delivery) (any, bool) {
 
 	return &dto.Errors{Errors: errs}, true
 }
+
+// TODO: get bulk
