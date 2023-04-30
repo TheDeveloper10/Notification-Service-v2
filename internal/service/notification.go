@@ -1,7 +1,6 @@
 package service
 
 import (
-	"errors"
 	"fmt"
 	"notification-service/internal/dto"
 	"notification-service/internal/repository"
@@ -15,12 +14,12 @@ type Notification struct {
 	notificationRepo       repository.INotification
 }
 
-func (svc *Notification) SendNotifications(notificationReq *dto.NotificationRequest) ([]error, util.StatusCode) {
+func (svc *Notification) SendNotifications(notificationReq *dto.NotificationRequest) ([]string, util.StatusCode) {
 	template, status := svc.templateSvc.GetTemplateByID(notificationReq.TemplateID)
 	if status == util.StatusNotFound {
-		return []error{errors.New("Template not found")}, util.StatusNotFound
+		return []string{"Template not found"}, util.StatusNotFound
 	} else if status != util.StatusSuccess {
-		return []error{errors.New("Failed to get template")}, util.StatusInternal
+		return []string{"Failed to get template"}, util.StatusInternal
 	}
 
 	template.Body.Fill(notificationReq.Placeholders)
@@ -88,14 +87,14 @@ func (svc *Notification) handleTarget(tarData *targetData, se *syncErrors) {
 
 		status := nt.SendFunc(&notification)
 		if status != util.StatusSuccess {
-			se.addError(fmt.Errorf("Failed to send message for target %d for %s", tarData.index, *nt.ContactInfo))
-			return
+			se.addError(fmt.Sprintf("Failed to send message for target %d (%s)", tarData.index, *nt.ContactInfo))
+			continue
 		}
 
 		_, status = svc.notificationRepo.SaveNotification(&notification)
 		if status != util.StatusSuccess {
-			se.addError(fmt.Errorf("Failed to save sent message for target %d for %s", tarData.index, *nt.ContactInfo))
-			return
+			se.addError(fmt.Sprintf("Failed to save sent message for target %d (%s)", tarData.index, *nt.ContactInfo))
+			continue
 		}
 	}
 }

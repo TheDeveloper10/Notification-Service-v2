@@ -22,10 +22,10 @@ type targetData struct {
 type syncErrors struct {
 	wg       sync.WaitGroup
 	errorsMu sync.Mutex
-	errors   []error
+	errors   []string
 }
 
-func (se *syncErrors) addError(err error) {
+func (se *syncErrors) addError(err string) {
 	se.errorsMu.Lock()
 	se.errors = append(se.errors, err)
 	se.errorsMu.Unlock()
@@ -35,6 +35,6 @@ func newSyncErrors() *syncErrors {
 	return &syncErrors{
 		wg:       sync.WaitGroup{},
 		errorsMu: sync.Mutex{},
-		errors:   []error{},
+		errors:   []string{},
 	}
 }

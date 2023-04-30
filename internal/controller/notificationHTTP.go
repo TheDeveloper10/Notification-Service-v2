@@ -38,9 +38,9 @@ func (ctrl *NotificationHTTP) Send(c *fiber.Ctx) error {
 	if status == util.StatusSuccess {
 		return c.SendStatus(fiber.StatusCreated)
 	} else if status == util.StatusNotFound {
-		return fiber.NewError(fiber.StatusNotFound, errs[0].Error())
+		return fiber.NewError(fiber.StatusNotFound, errs[0])
 	} else if status == util.StatusInternal {
-		return fiber.NewError(fiber.StatusInternalServerError, errs[0].Error())
+		return fiber.NewError(fiber.StatusInternalServerError, errs[0])
 	}
 
 	return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{

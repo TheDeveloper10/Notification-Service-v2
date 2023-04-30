@@ -27,7 +27,7 @@ func (ctrl *NotificationRMQ) Send(request *amqp.Delivery) (any, bool) {
 	if status == util.StatusSuccess {
 		return nil, true
 	} else if status == util.StatusNotFound || status == util.StatusInternal {
-		return errs[0].Error(), true
+		return errs[0], true
 	}
 
 	return map[string]any{"errors": errs}, true
