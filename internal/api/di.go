@@ -27,5 +27,7 @@ var (
 	templateRMQCtrl  = controller.NewTemplateRMQController(templateSvc)
 
 	notificationHTTPCtrl = controller.NewNotificationHTTPController(notificationSvc)
-	clientHTTPCtrl       = controller.NewClientHTTPController(clientSvc)
+	notificationRMQCtrl  = controller.NewNotificationRMQController(notificationSvc)
+
+	clientHTTPCtrl = controller.NewClientHTTPController(clientSvc)
 )

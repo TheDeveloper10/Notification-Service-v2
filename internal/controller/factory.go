@@ -28,6 +28,12 @@ func NewNotificationHTTPController(notificationSvc *service.Notification) *Notif
 	}
 }
 
+func NewNotificationRMQController(notificationSvc *service.Notification) *NotificationRMQ {
+	return &NotificationRMQ{
+		notificationSvc: notificationSvc,
+	}
+}
+
 func NewClientHTTPController(clientSvc *service.Client) *ClientHTTP {
 	return &ClientHTTP{
 		clientSvc: clientSvc,

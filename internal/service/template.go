@@ -7,8 +7,6 @@ import (
 	"sync"
 )
 
-// TODO: add templates cache?
-
 type Template struct {
 	templateRepo repository.ITemplate
 	cache        map[uint64]*dto.Template

@@ -10,5 +10,7 @@ func SetUpRabbitMQV1() {
 
 	client.RabbitMQ.Consume("write_template", templateRMQCtrl.Write)
 
+	client.RabbitMQ.Consume("send_notifications", notificationRMQCtrl.Send)
+
 	util.Logger.Info().Msg("Initialized RabbitMQ V1 routes")
 }

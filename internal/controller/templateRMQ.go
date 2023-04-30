@@ -37,3 +37,5 @@ func (ctrl *TemplateRMQ) Write(request *amqp.Delivery) (any, bool) {
 
 	return nil, true
 }
+
+// TODO: delete, get, get bulk
