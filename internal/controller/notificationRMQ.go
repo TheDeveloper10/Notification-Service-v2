@@ -18,17 +18,17 @@ func (ctrl *NotificationRMQ) Send(request *amqp.Delivery) (any, bool) {
 
 	err := json.Unmarshal(request.Body, &body)
 	if err != nil {
-		return "Body must be in JSON", true
+		return &dto.Error{Error: "Body must be in JSON"}, true
 	} else if err := body.Validate(); err != nil {
-		return err.Error(), true
+		return &dto.Error{Error: err.Error()}, true
 	}
 
 	errs, status := ctrl.notificationSvc.SendNotifications(&body)
 	if status == util.StatusSuccess {
 		return nil, true
 	} else if status == util.StatusNotFound || status == util.StatusInternal {
-		return errs[0], true
+		return &dto.Error{Error: errs[0]}, true
 	}
 
-	return map[string]any{"errors": errs}, true
+	return &dto.Errors{Errors: errs}, true
 }

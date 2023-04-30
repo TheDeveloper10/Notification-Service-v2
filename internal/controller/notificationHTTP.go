@@ -43,7 +43,5 @@ func (ctrl *NotificationHTTP) Send(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusInternalServerError, errs[0])
 	}
 
-	return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-		"errors": errs,
-	})
+	return c.Status(fiber.StatusBadRequest).JSON(&dto.Errors{Errors: errs})
 }

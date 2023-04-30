@@ -18,20 +18,20 @@ func (ctrl *TemplateRMQ) Write(request *amqp.Delivery) (any, bool) {
 
 	err := json.Unmarshal(request.Body, &body)
 	if err != nil {
-		return "Body must be in JSON", true
+		return &dto.Error{Error: "Body must be in JSON"}, true
 	} else if err := body.Validate(); err != nil {
-		return err.Error(), true
+		return &dto.Error{Error: err.Error()}, true
 	}
 
 	if body.ID == 0 {
 		_, status := ctrl.templateSvc.CreateTemplate(&body)
 		if status != util.StatusSuccess {
-			return "Failed to create template", true
+			return &dto.Error{Error: "Failed to create template"}, true
 		}
 	} else {
 		status := ctrl.templateSvc.UpdateTemplate(body.ID, &body)
 		if status != util.StatusSuccess {
-			return "Failed to update template", true
+			return &dto.Error{Error: "Failed to update template"}, true
 		}
 	}
 
