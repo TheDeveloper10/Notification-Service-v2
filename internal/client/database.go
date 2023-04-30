@@ -24,5 +24,6 @@ func InitDatabaseClient(conf *config.DatabaseConfig) *sql.DB {
 	c.SetMaxIdleConns(int(conf.PoolSize))
 	c.SetMaxOpenConns(int(conf.PoolSize))
 
+	util.Logger.Info().Msg("Initialized Database Client")
 	return c
 }

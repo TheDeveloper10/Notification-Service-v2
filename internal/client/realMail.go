@@ -4,14 +4,18 @@ import (
 	"fmt"
 	"net/smtp"
 	"notification-service/internal/config"
+	"notification-service/internal/util"
 )
 
 func newRealMailClientFromConfig(conf *config.MailConfig) *realMail {
-	return &realMail{
+	c := realMail{
 		address:   fmt.Sprintf("%s:%d", conf.Host, conf.Port),
 		fromEmail: conf.FromEmail,
 		auth:      smtp.PlainAuth("", conf.FromEmail, conf.FromPassword, conf.Host),
 	}
+
+	util.Logger.Info().Msg("Initialized Mail Client")
+	return &c
 }
 
 type realMail struct {

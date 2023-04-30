@@ -5,17 +5,21 @@ import (
 	"io/ioutil"
 	"net/http"
 	"notification-service/internal/config"
+	"notification-service/internal/util"
 	"strings"
 )
 
 func newRealSMSClientFromConfig(conf *config.SMSConfig) *realSMS {
-	return &realSMS{
+	c := realSMS{
 		httpClient:        &http.Client{},
 		endpoint:          fmt.Sprintf("https://api.twilio.com/2010-04-01/Accounts/%s/Messages.json", conf.AccountSID),
 		queryParamsFormat: fmt.Sprintf("From=%s&To=%%s&Body=%%s", conf.FromPhoneNumber),
 		accountSID:        conf.AccountSID,
 		authToken:         conf.AuthToken,
 	}
+
+	util.Logger.Info().Msg("Initialized SMS Client")
+	return &c
 }
 
 type realSMS struct {

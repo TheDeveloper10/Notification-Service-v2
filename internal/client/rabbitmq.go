@@ -29,10 +29,13 @@ func InitRabbitMQClient(conf *config.RabbitMQConfig) *RabbitMQClient {
 		return nil
 	}
 
-	return &RabbitMQClient{
+	c := RabbitMQClient{
 		connection: connection,
 		channel:    channel,
 	}
+
+	util.Logger.Info().Msg("Initialized RabbitMQ Client")
+	return &c
 }
 
 type RabbitMQClient struct {

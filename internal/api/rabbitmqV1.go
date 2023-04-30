@@ -2,13 +2,11 @@ package api
 
 import (
 	"notification-service/internal/client"
-	"notification-service/internal/controller"
+	"notification-service/internal/util"
 )
 
 func SetUpRabbitMQV1() {
-	var (
-		testCtrl = controller.NewTestRMQController()
-	)
+	client.RabbitMQ.Consume("test", testRMQCtrl.Get)
 
-	client.RabbitMQ.Consume("test", testCtrl.Get)
+	util.Logger.Info().Msg("Initialized RabbitMQ V1 routes")
 }

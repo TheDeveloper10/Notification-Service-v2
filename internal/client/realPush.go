@@ -20,16 +20,19 @@ func newRealPushClientFromConfig(credentialsFile string) *realPush {
 		return nil
 	}
 
-	c, err := app.Messaging(ctx)
+	msgClient, err := app.Messaging(ctx)
 	if err != nil {
 		util.Logger.Error().Msg(err.Error())
 		util.Logger.Panic().Msg("Failed to initialize Firebase Messaging app")
 		return nil
 	}
 
-	return &realPush{
-		client: c,
+	c := realPush{
+		client: msgClient,
 	}
+
+	util.Logger.Info().Msg("Initialized Push Client")
+	return &c
 }
 
 type realPush struct {
