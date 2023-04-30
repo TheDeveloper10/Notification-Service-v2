@@ -27,7 +27,7 @@ func (ctrl *Client) New(c *fiber.Ctx) error {
 }
 
 func (ctrl *Client) IssueToken(c *fiber.Ctx) error {
-	body := dto.Client{}
+	body := dto.ClientCredentials{}
 	if err := c.BodyParser(&body); err != nil {
 		return err
 	} else if err := body.Validate(); err != nil {

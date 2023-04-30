@@ -15,18 +15,20 @@ func SetUpRESTV1(app *fiber.App) {
 		templateRepo           = repository.NewBasicTemplateRepository()
 		notificationRepo       = repository.NewBasicNotificationRepository()
 		notificationSenderRepo = repository.NewBasicNotificationSenderRepository()
+		clientRepo             = repository.NewBasicClientRepository()
 	)
 
 	var (
 		templateSvc     = service.NewTemplateService(templateRepo)
 		notificationSvc = service.NewNotificationService(templateSvc, notificationSenderRepo, notificationRepo)
+		clientSvc       = service.NewClientService(clientRepo)
 	)
 
 	var (
 		testCtrl         = controller.NewTestController()
 		templateCtrl     = controller.NewTemplateController(templateSvc)
 		notificationCtrl = controller.NewNotificationController(notificationSvc)
-		clientCtrl       = controller.NewClientController()
+		clientCtrl       = controller.NewClientController(clientSvc)
 	)
 
 	api := app.Group("/v1")

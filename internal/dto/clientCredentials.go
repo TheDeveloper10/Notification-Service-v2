@@ -1,18 +1,15 @@
 package dto
 
 import (
-	"notification-service/internal/util"
-
 	"github.com/gofiber/fiber/v2"
 )
 
-type Client struct {
-	ID          string           `json:"id"`
-	Secret      string           `json:"secret"`
-	Permissions util.Permissions `json:"permissions"`
+type ClientCredentials struct {
+	ID     string `json:"id"`
+	Secret string `json:"secret"`
 }
 
-func (c *Client) Validate() error {
+func (c *ClientCredentials) Validate() error {
 	if len(c.ID) != 16 {
 		return fiber.NewError(fiber.StatusBadRequest, "ID must be 16 characters long")
 	}

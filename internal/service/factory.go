@@ -22,3 +22,9 @@ func NewNotificationService(templateSvc *Template, notificationSenderRepo reposi
 		notificationRepo:       notificationRepo,
 	}
 }
+
+func NewClientService(clientRepo repository.IClient) *Client {
+	return &Client{
+		clientRepo: clientRepo,
+	}
+}

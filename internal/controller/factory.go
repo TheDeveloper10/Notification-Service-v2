@@ -18,6 +18,8 @@ func NewNotificationController(notificationSvc *service.Notification) *Notificat
 	}
 }
 
-func NewClientController() *Client {
-	return &Client{}
+func NewClientController(clientSvc *service.Client) *Client {
+	return &Client{
+		clientSvc: clientSvc,
+	}
 }
