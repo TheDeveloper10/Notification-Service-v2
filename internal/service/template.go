@@ -15,65 +15,65 @@ type Template struct {
 	cacheMu      sync.RWMutex
 }
 
-func (t *Template) CreateTemplate(template *dto.Template) (uint64, util.StatusCode) {
-	id, status := t.templateRepo.CreateTemplate(template)
+func (svc *Template) CreateTemplate(template *dto.Template) (uint64, util.StatusCode) {
+	id, status := svc.templateRepo.CreateTemplate(template)
 	if status != util.StatusSuccess {
 		return id, status
 	}
 
 	template.ID = id
 
-	t.cacheMu.Lock()
-	defer t.cacheMu.Unlock()
+	svc.cacheMu.Lock()
+	defer svc.cacheMu.Unlock()
 
-	t.cache[id] = template
+	svc.cache[id] = template
 
 	return id, status
 }
 
-func (t *Template) UpdateTemplate(templateID uint64, template *dto.Template) util.StatusCode {
-	status := t.templateRepo.UpdateTemplate(templateID, template)
+func (svc *Template) UpdateTemplate(templateID uint64, template *dto.Template) util.StatusCode {
+	status := svc.templateRepo.UpdateTemplate(templateID, template)
 	if status != util.StatusSuccess {
 		return status
 	}
 
-	t.cacheMu.Lock()
-	defer t.cacheMu.Unlock()
+	svc.cacheMu.Lock()
+	defer svc.cacheMu.Unlock()
 
-	t.cache[templateID] = template
+	svc.cache[templateID] = template
 
 	return status
 }
 
-func (t *Template) GetTemplateByID(templateID uint64) (*dto.Template, util.StatusCode) {
-	t.cacheMu.RLock()
-	if template, ok := t.cache[templateID]; ok {
-		t.cacheMu.RUnlock()
+func (svc *Template) GetTemplateByID(templateID uint64) (*dto.Template, util.StatusCode) {
+	svc.cacheMu.RLock()
+	if template, ok := svc.cache[templateID]; ok {
+		svc.cacheMu.RUnlock()
 		return template, util.StatusSuccess
 	}
-	t.cacheMu.RUnlock()
+	svc.cacheMu.RUnlock()
 
-	template, status := t.templateRepo.GetTemplateByID(templateID)
+	template, status := svc.templateRepo.GetTemplateByID(templateID)
 	if status != util.StatusSuccess {
 		return template, status
 	}
 
-	t.cacheMu.Lock()
-	defer t.cacheMu.Unlock()
+	svc.cacheMu.Lock()
+	defer svc.cacheMu.Unlock()
 
-	t.cache[templateID] = template
+	svc.cache[templateID] = template
 
 	return template, status
 }
 
-func (t *Template) GetBulkTemplates(filter *dto.TemplateBulkFilter) ([]dto.Template, util.StatusCode) {
-	return t.templateRepo.GetBulkTemplates(filter)
+func (svc *Template) GetBulkTemplates(filter *dto.TemplateBulkFilter) ([]dto.Template, util.StatusCode) {
+	return svc.templateRepo.GetBulkTemplates(filter)
 }
 
-func (t *Template) DeleteTemplate(templateID uint64) util.StatusCode {
-	t.cacheMu.Lock()
-	delete(t.cache, templateID)
-	t.cacheMu.Unlock()
+func (svc *Template) DeleteTemplate(templateID uint64) util.StatusCode {
+	svc.cacheMu.Lock()
+	delete(svc.cache, templateID)
+	svc.cacheMu.Unlock()
 
-	return t.templateRepo.DeleteTemplate(templateID)
+	return svc.templateRepo.DeleteTemplate(templateID)
 }

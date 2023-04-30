@@ -15,8 +15,10 @@ service:
     - "DA"
     - "CS"
   auth:
-    master_client_id: abcdefgh
-    master_client_secret: w3fmLYkxIybT23Uf4cC2CP8Y2VoPTDhwy5yO2BIh86dgEOS475ZZL7i5cd1efieG
+    # 16 characters
+    master_client_id: Xbr0Wh7Tk0TVfQSn
+    # 128 characters
+    master_client_secret: ANoY0gtFIL3DcyMLzaPEdluRRd95KTzfsZeJbhxMvBkJp1oDly7yRYwiEHUHFqbiqv1ktbfQn1XxQpPgroivbODCI5UY26bqRRlUVnoYJTWRxZxFF3quwFmNdQuj7l20
     token_signing_key: 5kpyjfDATS2SleG4
     token_expiry_time: 300 # in seconds
 

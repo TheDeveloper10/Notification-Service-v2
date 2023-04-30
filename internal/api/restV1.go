@@ -5,6 +5,7 @@ import (
 	"notification-service/internal/controller"
 	"notification-service/internal/repository"
 	"notification-service/internal/service"
+	"notification-service/internal/util"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -35,15 +36,15 @@ func SetUpRESTV1(app *fiber.App) {
 	api.Get("/test", testCtrl.Get)
 	api.Post("/test", testCtrl.Post)
 
-	api.Post("/clients", clientCtrl.New)
+	api.Post("/clients", middleware.Authentication, middleware.Authorization(util.ManageClients), clientCtrl.New)
 	api.Post("/clients/token", clientCtrl.IssueToken)
 
-	api.Get("/notifications", middleware.Auth, notificationCtrl.GetBulk)
-	api.Post("/notifications", middleware.Auth, notificationCtrl.Send)
+	api.Get("/notifications", middleware.Authentication, middleware.Authorization(util.ReadNotifications), notificationCtrl.GetBulk)
+	api.Post("/notifications", middleware.Authentication, middleware.Authorization(util.SendNotifications), notificationCtrl.Send)
 
-	api.Get("/templates", middleware.Auth, templateCtrl.GetBulk)
-	api.Post("/templates", middleware.Auth, templateCtrl.Create)
-	api.Get("/templates/:templateID", middleware.Auth, templateCtrl.GetByID)
-	api.Put("/templates/:templateID", middleware.Auth, templateCtrl.ReplaceByID)
-	api.Delete("/templates/:templateID", middleware.Auth, templateCtrl.DeleteByID)
+	api.Get("/templates", middleware.Authentication, middleware.Authorization(util.ReadTemplates), templateCtrl.GetBulk)
+	api.Post("/templates", middleware.Authentication, middleware.Authorization(util.WriteTemplates), templateCtrl.Create)
+	api.Get("/templates/:templateID", middleware.Authentication, middleware.Authorization(util.ReadTemplates), templateCtrl.GetByID)
+	api.Put("/templates/:templateID", middleware.Authentication, middleware.Authorization(util.WriteTemplates), templateCtrl.ReplaceByID)
+	api.Delete("/templates/:templateID", middleware.Authentication, middleware.Authorization(util.WriteTemplates), templateCtrl.DeleteByID)
 }

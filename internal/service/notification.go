@@ -15,8 +15,8 @@ type Notification struct {
 	notificationRepo       repository.INotification
 }
 
-func (n *Notification) SendNotifications(notificationReq *dto.NotificationRequest) ([]error, util.StatusCode) {
-	template, status := n.templateSvc.GetTemplateByID(notificationReq.TemplateID)
+func (svc *Notification) SendNotifications(notificationReq *dto.NotificationRequest) ([]error, util.StatusCode) {
+	template, status := svc.templateSvc.GetTemplateByID(notificationReq.TemplateID)
 	if status == util.StatusNotFound {
 		return []error{errors.New("Template not found")}, util.StatusNotFound
 	} else if status != util.StatusSuccess {
@@ -38,7 +38,7 @@ func (n *Notification) SendNotifications(notificationReq *dto.NotificationReques
 			template:        template,
 		}
 
-		go n.handleTarget(td, se)
+		go svc.handleTarget(td, se)
 	}
 
 	se.wg.Wait()
@@ -50,24 +50,24 @@ func (n *Notification) SendNotifications(notificationReq *dto.NotificationReques
 	return se.errors, util.StatusError
 }
 
-func (n *Notification) handleTarget(tarData *targetData, se *syncErrors) {
+func (svc *Notification) handleTarget(tarData *targetData, se *syncErrors) {
 	defer se.wg.Done()
 
 	notificationTypes := []notificationType{
 		{
 			ContactInfo: tarData.target.Email,
 			Message:     tarData.template.Body.Email,
-			SendFunc:    n.notificationSenderRepo.SendEmail,
+			SendFunc:    svc.notificationSenderRepo.SendEmail,
 		},
 		{
 			ContactInfo: tarData.target.PhoneNumber,
 			Message:     tarData.template.Body.SMS,
-			SendFunc:    n.notificationSenderRepo.SendSMS,
+			SendFunc:    svc.notificationSenderRepo.SendSMS,
 		},
 		{
 			ContactInfo: tarData.target.FCMRegistrationToken,
 			Message:     tarData.template.Body.Push,
-			SendFunc:    n.notificationSenderRepo.SendPush,
+			SendFunc:    svc.notificationSenderRepo.SendPush,
 		},
 	}
 
@@ -92,7 +92,7 @@ func (n *Notification) handleTarget(tarData *targetData, se *syncErrors) {
 			return
 		}
 
-		_, status = n.notificationRepo.SaveNotification(&notification)
+		_, status = svc.notificationRepo.SaveNotification(&notification)
 		if status != util.StatusSuccess {
 			se.addError(fmt.Errorf("Failed to save sent message for target %d for %s", tarData.index, *nt.ContactInfo))
 			return
@@ -100,6 +100,6 @@ func (n *Notification) handleTarget(tarData *targetData, se *syncErrors) {
 	}
 }
 
-func (n *Notification) GetBulkNotifications(filter *dto.NotificationBulkFilter) ([]dto.Notification, util.StatusCode) {
-	return n.notificationRepo.GetBulkNotifications(filter)
+func (svc *Notification) GetBulkNotifications(filter *dto.NotificationBulkFilter) ([]dto.Notification, util.StatusCode) {
+	return svc.notificationRepo.GetBulkNotifications(filter)
 }

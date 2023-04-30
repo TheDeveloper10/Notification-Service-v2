@@ -4,7 +4,7 @@ import "notification-service/internal/util"
 
 func InitMiddlewares() {
 	InitCORSMiddleware()
-	InitAuthMiddleware()
+	InitAuthenticationMiddleware()
 
 	util.Logger.Info().Msg("Initialized all middlewares")
 }

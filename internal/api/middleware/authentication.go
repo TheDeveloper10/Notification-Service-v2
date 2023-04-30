@@ -7,11 +7,11 @@ import (
 	jwtware "github.com/gofiber/jwt/v3"
 )
 
-func InitAuthMiddleware() {
-	Auth = jwtware.New(jwtware.Config{
+func InitAuthenticationMiddleware() {
+	Authentication = jwtware.New(jwtware.Config{
 		SigningKey:   []byte(config.Master.Service.Auth.TokenSigningKey),
-		ErrorHandler: AuthErrorHandler,
+		ErrorHandler: AuthenticationErrorHandler,
 	})
 }
 
-var Auth fiber.Handler
+var Authentication fiber.Handler
