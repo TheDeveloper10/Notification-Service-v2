@@ -5,6 +5,7 @@ import "notification-service/internal/util"
 type MasterConfig struct {
 	Service  ServiceConfig  `yaml:"service"`
 	HTTP     HTTPConfig     `yaml:"http"`
+	RabbitMQ RabbitMQConfig `yaml:"rabbitmq"`
 	Database DatabaseConfig `yaml:"database"`
 	Mail     MailConfig     `yaml:"mail"`
 	SMS      SMSConfig      `yaml:"sms"`
@@ -26,6 +27,13 @@ type AuthConfig struct {
 
 type HTTPConfig struct {
 	Address string `yaml:"address"`
+}
+
+type RabbitMQConfig struct {
+	Username string `yaml:"username"`
+	Password string `yaml:"password"`
+	Host     string `yaml:"host"`
+	Port     uint16 `yaml:"port"`
 }
 
 type DatabaseConfig struct {

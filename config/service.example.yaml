@@ -26,6 +26,13 @@ service:
 http: 
   address: ":8081"
 
+# configuration for the RabbitMQ listener
+rabbitmq:
+  username: guest
+  password: guest
+  host: ns-rabbitmq
+  port: 5672
+
 # configuration for the database
 database:
   driver: "mysql"
