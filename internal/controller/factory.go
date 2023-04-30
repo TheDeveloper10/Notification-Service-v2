@@ -16,6 +16,12 @@ func NewTemplateHTTPController(templateSvc *service.Template) *TemplateHTTP {
 	}
 }
 
+func NewTemplateRMQController(templateSvc *service.Template) *TemplateRMQ {
+	return &TemplateRMQ{
+		templateSvc: templateSvc,
+	}
+}
+
 func NewNotificationHTTPController(notificationSvc *service.Notification) *NotificationHTTP {
 	return &NotificationHTTP{
 		notificationSvc: notificationSvc,
