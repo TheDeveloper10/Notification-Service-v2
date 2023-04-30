@@ -86,8 +86,6 @@ func (n *Notification) handleTarget(tarData *targetData, se *syncErrors) {
 			Message:     msgTemplate.Fill(tarData.target.Placeholders),
 		}
 
-		util.Logger.Info().Msg(*nt.ContactInfo)
-
 		status := nt.SendFunc(&notification)
 		if status != util.StatusSuccess {
 			se.addError(fmt.Errorf("Failed to send message for target %d for %s", tarData.index, *nt.ContactInfo))

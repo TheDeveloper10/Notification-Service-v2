@@ -10,28 +10,36 @@ type NotificationSenderRepository struct {
 }
 
 func (nsr *NotificationSenderRepository) SendEmail(notification *dto.Notification) util.StatusCode {
-	util.Logger.Info().Msg("Sending an email")
 	err := client.Mail.MailSingle(notification.Title, notification.Message, notification.ContactInfo)
+
+	if err == nil {
+		util.Logger.Info().Msg("Sent an email")
+		return util.StatusSuccess
+	}
 	return nsr.handleError(err)
 }
 
 func (nsr *NotificationSenderRepository) SendSMS(notification *dto.Notification) util.StatusCode {
-	util.Logger.Info().Msg("Sending an SMS")
 	err := client.SMS.SendSMS(notification.Title, notification.Message, notification.ContactInfo)
+
+	if err == nil {
+		util.Logger.Info().Msg("Sent an SMS")
+		return util.StatusSuccess
+	}
 	return nsr.handleError(err)
 }
 
 func (nsr *NotificationSenderRepository) SendPush(notification *dto.Notification) util.StatusCode {
-	util.Logger.Info().Msg("Sending a Push")
 	err := client.Push.SendMessage(notification.Title, notification.Message, notification.ContactInfo)
+
+	if err == nil {
+		util.Logger.Info().Msg("Sent a push notification")
+		return util.StatusSuccess
+	}
 	return nsr.handleError(err)
 }
 
 func (nsr *NotificationSenderRepository) handleError(err error) util.StatusCode {
-	if err == nil {
-		return util.StatusSuccess
-	} else {
-		util.Logger.Error().Msg(err.Error())
-		return util.StatusError
-	}
+	util.Logger.Error().Msg(err.Error())
+	return util.StatusError
 }
