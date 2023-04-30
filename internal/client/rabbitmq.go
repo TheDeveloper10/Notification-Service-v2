@@ -86,7 +86,7 @@ func (rmq *RabbitMQClient) processRequest(request amqp.Delivery, handler RabbitM
 			return
 		}
 
-		if request.ReplyTo != "" && request.CorrelationId != "" {
+		if request.ReplyTo != "" {
 			rmq.publishMessage(resp, request.ReplyTo, request.CorrelationId)
 		}
 	}
