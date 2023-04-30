@@ -28,10 +28,9 @@ http:
 
 # configuration for the RabbitMQ listener
 rabbitmq:
-  username: guest
-  password: guest
-  host: ns-rabbitmq
-  port: 5672
+  username: "guest"
+  password: "guest"
+  host: "localhost:5672"
 
 # configuration for the database
 database:

@@ -1,6 +1,6 @@
 version: '3.7'
 services:
-  storage-1:
+  database:
     image: "mysql:8.0.30"
     container_name: "ns-db"
     ports:
@@ -9,3 +9,13 @@ services:
       MYSQL_ROOT_PASSWORD: nsPass1234
     volumes:
       - ../sql/:/docker-entrypoint-initdb.d/
+
+  rabbitmq:
+    image: "rabbitmq:3.10.7-management-alpine"
+    container_name: "ns-rmq"
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - ./rabbitmq.conf:/etc/rabbitmq/rabbitmq.conf:ro
+      - ./rabbitmq-definitions.json:/etc/rabbitmq/definitions.json:ro

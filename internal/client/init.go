@@ -17,7 +17,9 @@ var (
 func InitClients() {
 	Database = InitDatabaseClient(&config.Master.Database)
 
-	RabbitMQ = InitRabbitMQClient(&config.Master.RabbitMQ)
+	if config.Master.Service.APIs.Has(config.RABBITMQ_V1_API) {
+		RabbitMQ = InitRabbitMQClient(&config.Master.RabbitMQ)
+	}
 
 	Mail = InitMailClient(
 		&config.Master.Mail,

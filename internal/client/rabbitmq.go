@@ -12,7 +12,7 @@ import (
 )
 
 func InitRabbitMQClient(conf *config.RabbitMQConfig) *RabbitMQClient {
-	url := fmt.Sprintf("amqp://%s:%s@%s:%d", conf.Username, conf.Password, conf.Host, conf.Port)
+	url := fmt.Sprintf("amqp://%s:%s@%s", conf.Username, conf.Password, conf.Host)
 
 	connection, err := amqp.Dial(url)
 	if err != nil {
@@ -49,6 +49,13 @@ func (rmq *RabbitMQClient) Close() {
 }
 
 func (rmq *RabbitMQClient) Consume(queueName string, handler RabbitMQHandler) {
+	_, err := rmq.channel.QueueDeclare(queueName, true, false, false, false, nil)
+	if err != nil {
+		util.Logger.Error().Msg(err.Error())
+		util.Logger.Panic().Msgf("Failed to initialize RabbitMQ queue %s", queueName)
+		return
+	}
+
 	requests, err := rmq.channel.Consume(
 		queueName,
 		"", false, false, false, false, nil,
