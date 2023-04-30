@@ -1,8 +1,8 @@
 package client
 
 import (
-	"errors"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"notification-service/internal/config"
 	"strings"
@@ -12,7 +12,7 @@ func newRealSMSClientFromConfig(conf *config.SMSConfig) *realSMS {
 	return &realSMS{
 		httpClient:        &http.Client{},
 		endpoint:          fmt.Sprintf("https://api.twilio.com/2010-04-01/Accounts/%s/Messages.json", conf.AccountSID),
-		queryParamsFormat: fmt.Sprintf("MessagingServiceSid=%s&To=%%s&Body=%%s", conf.MessagingServiceSID),
+		queryParamsFormat: fmt.Sprintf("From=%s&To=%%s&Body=%%s", conf.FromPhoneNumber),
 		accountSID:        conf.AccountSID,
 		authToken:         conf.AuthToken,
 	}
@@ -42,7 +42,12 @@ func (rs *realSMS) SendSMS(title string, body string, to string) error {
 	if err != nil {
 		return err
 	} else if resp.StatusCode != 200 && resp.StatusCode != 201 {
-		return errors.New("failed to send SMS")
+		defer resp.Body.Close()
+		bodyBytes, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return fmt.Errorf("Failed to send SMS. Status code: %d", resp.StatusCode)
+		}
+		return fmt.Errorf("Failed to send SMS. Response body: %s", string(bodyBytes))
 	}
 
 	return nil

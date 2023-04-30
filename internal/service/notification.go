@@ -30,9 +30,10 @@ func (n *Notification) SendNotifications(notificationReq *dto.NotificationReques
 	se.wg.Add(len(notificationReq.Targets))
 
 	for index, target := range notificationReq.Targets {
+		targetBuf := target
 		td := &targetData{
 			index:           index,
-			target:          &target,
+			target:          &targetBuf,
 			notificationReq: notificationReq,
 			template:        template,
 		}
@@ -84,6 +85,8 @@ func (n *Notification) handleTarget(tarData *targetData, se *syncErrors) {
 			Title:       tarData.notificationReq.Title,
 			Message:     msgTemplate.Fill(tarData.target.Placeholders),
 		}
+
+		util.Logger.Info().Msg(*nt.ContactInfo)
 
 		status := nt.SendFunc(&notification)
 		if status != util.StatusSuccess {

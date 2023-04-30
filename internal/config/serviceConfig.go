@@ -37,7 +37,7 @@ type MailConfig struct {
 }
 
 type SMSConfig struct {
-	MessagingServiceSID string `yaml:"messaging_service_sid"`
-	AccountSID          string `yaml:"account_sid"`
-	AuthToken           string `yaml:"authentication_token"`
+	FromPhoneNumber string `yaml:"from_phone_number"`
+	AccountSID      string `yaml:"account_sid"`
+	AuthToken       string `yaml:"authentication_token"`
 }

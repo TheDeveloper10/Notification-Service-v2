@@ -10,16 +10,19 @@ type NotificationSenderRepository struct {
 }
 
 func (nsr *NotificationSenderRepository) SendEmail(notification *dto.Notification) util.StatusCode {
+	util.Logger.Info().Msg("Sending an email")
 	err := client.Mail.MailSingle(notification.Title, notification.Message, notification.ContactInfo)
 	return nsr.handleError(err)
 }
 
 func (nsr *NotificationSenderRepository) SendSMS(notification *dto.Notification) util.StatusCode {
+	util.Logger.Info().Msg("Sending an SMS")
 	err := client.SMS.SendSMS(notification.Title, notification.Message, notification.ContactInfo)
 	return nsr.handleError(err)
 }
 
 func (nsr *NotificationSenderRepository) SendPush(notification *dto.Notification) util.StatusCode {
+	util.Logger.Info().Msg("Sending a Push")
 	err := client.Push.SendMessage(notification.Title, notification.Message, notification.ContactInfo)
 	return nsr.handleError(err)
 }

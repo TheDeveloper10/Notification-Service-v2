@@ -3,6 +3,7 @@ package client
 import (
 	"database/sql"
 	"notification-service/internal/config"
+	"notification-service/internal/util"
 )
 
 var (
@@ -29,4 +30,6 @@ func InitClients() {
 		config.FirebaseAdminSDKPath,
 		config.Master.Service.NotificationTypes.Has(config.NOTIFICATION_TYPE_PUSH),
 	)
+
+	util.Logger.Info().Msg("Loaded all clients")
 }

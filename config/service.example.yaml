@@ -1,19 +1,19 @@
 # configuration for the entire service
 service:
   apis:
-    - http_rest_v1
-    - rabbitmq_v1
+    - "http_rest_v1"
+    - "rabbitmq_v1"
   notification_types:
-    - email
-    - sms
-    - push
+    - "mail"
+    - "sms"
+    - "push"
   allowed_languages:
-    - BG
-    - EN
-    - DE
-    - ES
-    - DA
-    - CS
+    - "BG"
+    - "EN"
+    - "DE"
+    - "ES"
+    - "DA"
+    - "CS"
 
 # configuration for the HTTP server
 http: 
@@ -21,23 +21,23 @@ http:
 
 # configuration for the database
 database:
-  driver: mysql
-  username: root
-  password: nsPass1234
-  host: localhost:3306
-  name: notifications_db
+  driver: "mysql"
+  username: "root"
+  password: "nsPass1234"
+  host: "localhost:3306"
+  name: "notifications_db"
   pool_size: 10
 
 # needed only if 'mail' is included in `service.notification_types`
 mail:
-  from_email: your-email@gmail.com
-  from_password: your-password
-  host: smtp.gmail.com
+  from_email: "your-email@gmail.com"
+  from_password: "your-password"
+  host: "smtp.gmail.com"
   port: 587
 
 # needed only if 'sms' is included in `service.notification_types`
-# twillio configuraiton
+# twilio configuration
 sms:
-  messaging_service_sid: your-messaging-service-sid
-  account_sid: your-account-sid
-  authentication_token: your-authentication-token
+  from_phone_number: "+11111111111"
+  account_sid: "your-account-sid"
+  authentication_token: "your-authentication-token"
