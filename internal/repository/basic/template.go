@@ -27,7 +27,7 @@ func (tr *TemplateRepository) CreateTemplate(template *dto.Template) (uint64, ut
 		return 0, util.StatusInternal
 	}
 
-	util.Logger.Error().Msgf("Created template %d", id)
+	util.Logger.Info().Msgf("Created template %d", id)
 	return uint64(id), util.StatusSuccess
 }
 
@@ -50,7 +50,7 @@ func (tr *TemplateRepository) UpdateTemplate(templateID uint64, template *dto.Te
 		return util.StatusNotFound
 	}
 
-	util.Logger.Error().Msgf("Updated template %d", templateID)
+	util.Logger.Info().Msgf("Updated template %d", templateID)
 	return util.StatusSuccess
 }
 

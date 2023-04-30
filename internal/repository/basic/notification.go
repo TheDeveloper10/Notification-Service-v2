@@ -28,7 +28,7 @@ func (nr *NotificationRepository) SaveNotification(notification *dto.Notificatio
 		return 0, util.StatusInternal
 	}
 
-	util.Logger.Error().Msgf("Saved notification %d", id)
+	util.Logger.Info().Msgf("Saved notification %d", id)
 	return uint64(id), util.StatusSuccess
 }
 
@@ -59,6 +59,7 @@ func (nr *NotificationRepository) GetBulkNotifications(filter *dto.NotificationB
 		notifications = append(notifications, *notification)
 	}
 
+	util.Logger.Info().Msgf("Fetched %d notifications", len(notifications))
 	return notifications, util.StatusSuccess
 }
 
