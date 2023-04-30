@@ -15,18 +15,48 @@ type Client struct {
 }
 
 func (svc *Client) NewClient(permissions *dto.Permissions) (*dto.Client, util.StatusCode) {
-	// TODO: receive permissions, return dto.Client
+	idStr, err := util.GenerateString(16)
+	if err != nil {
+		return nil, util.StatusInternal
+	}
 
-	return nil, util.StatusSuccess
+	secretStr, err := util.GenerateString(128)
+	if err != nil {
+		return nil, util.StatusInternal
+	}
+
+	clientObj := dto.Client{
+		ID:          idStr,
+		Secret:      secretStr,
+		Permissions: permissions.Permissions,
+	}
+
+	status := svc.clientRepo.CreateClient(&clientObj)
+	if status == util.StatusSuccess {
+		return &clientObj, status
+	}
+
+	return nil, status
 }
 
 func (svc *Client) IssueToken(clientCredentials *dto.ClientCredentials) (string, util.StatusCode) {
-	clientObj, status := svc.clientRepo.GetClient(clientCredentials)
-	if status != util.StatusSuccess {
-		return "", status
+	var clientMetadata *dto.ClientMetadata
+	if clientCredentials.ID != config.Master.Service.Auth.MasterClientID &&
+		clientCredentials.Secret != config.Master.Service.Auth.MasterClientSecret {
+		clientMetadataTmp, status := svc.clientRepo.GetClient(clientCredentials)
+		if status != util.StatusSuccess {
+			return "", status
+		}
+
+		clientMetadata = clientMetadataTmp
+	} else {
+		clientMetadata = &dto.ClientMetadata{
+			ID:          clientCredentials.ID,
+			Permissions: util.PermissionAll,
+		}
 	}
 
-	token, err := svc.newToken(clientObj.Permissions)
+	token, err := svc.newToken(clientMetadata.Permissions)
 	if err != nil {
 		util.Logger.Error().Msg(err.Error())
 		return "", util.StatusInternal

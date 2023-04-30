@@ -5,19 +5,20 @@ type PermissionString string
 type Permissions []PermissionString
 
 const (
-	ManageClients PermissionsNumeric = 1 << iota
-	WriteTemplates
-	ReadTemplates
-	SendNotifications
-	ReadNotifications
+	PermissionManageClients PermissionsNumeric = 1 << iota
+	PermissionWriteTemplates
+	PermissionReadTemplates
+	PermissionSendNotifications
+	PermissionReadNotifications
+	PermissionAll PermissionsNumeric = 255
 )
 
 var permissionsMap = map[PermissionString]PermissionsNumeric{
-	"manage_clients":     ManageClients,
-	"write_templates":    WriteTemplates,
-	"read_templates":     ReadTemplates,
-	"send_notifications": SendNotifications,
-	"read_notifications": ReadNotifications,
+	"manage_clients":     PermissionManageClients,
+	"write_templates":    PermissionWriteTemplates,
+	"read_templates":     PermissionReadTemplates,
+	"send_notifications": PermissionSendNotifications,
+	"read_notifications": PermissionReadNotifications,
 }
 
 func (pn *PermissionsNumeric) ToArray() Permissions {

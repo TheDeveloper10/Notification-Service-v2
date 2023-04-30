@@ -38,15 +38,15 @@ func SetUpRESTV1(app *fiber.App) {
 	api.Get("/test", testCtrl.Get)
 	api.Post("/test", testCtrl.Post)
 
-	api.Post("/clients", middleware.Authentication, middleware.Authorization(util.ManageClients), clientCtrl.New)
+	api.Post("/clients", middleware.Authentication, middleware.Authorization(util.PermissionManageClients), clientCtrl.New)
 	api.Post("/clients/token", clientCtrl.IssueToken)
 
-	api.Get("/notifications", middleware.Authentication, middleware.Authorization(util.ReadNotifications), notificationCtrl.GetBulk)
-	api.Post("/notifications", middleware.Authentication, middleware.Authorization(util.SendNotifications), notificationCtrl.Send)
+	api.Get("/notifications", middleware.Authentication, middleware.Authorization(util.PermissionReadNotifications), notificationCtrl.GetBulk)
+	api.Post("/notifications", middleware.Authentication, middleware.Authorization(util.PermissionSendNotifications), notificationCtrl.Send)
 
-	api.Get("/templates", middleware.Authentication, middleware.Authorization(util.ReadTemplates), templateCtrl.GetBulk)
-	api.Post("/templates", middleware.Authentication, middleware.Authorization(util.WriteTemplates), templateCtrl.Create)
-	api.Get("/templates/:templateID", middleware.Authentication, middleware.Authorization(util.ReadTemplates), templateCtrl.GetByID)
-	api.Put("/templates/:templateID", middleware.Authentication, middleware.Authorization(util.WriteTemplates), templateCtrl.ReplaceByID)
-	api.Delete("/templates/:templateID", middleware.Authentication, middleware.Authorization(util.WriteTemplates), templateCtrl.DeleteByID)
+	api.Get("/templates", middleware.Authentication, middleware.Authorization(util.PermissionReadTemplates), templateCtrl.GetBulk)
+	api.Post("/templates", middleware.Authentication, middleware.Authorization(util.PermissionWriteTemplates), templateCtrl.Create)
+	api.Get("/templates/:templateID", middleware.Authentication, middleware.Authorization(util.PermissionReadTemplates), templateCtrl.GetByID)
+	api.Put("/templates/:templateID", middleware.Authentication, middleware.Authorization(util.PermissionWriteTemplates), templateCtrl.ReplaceByID)
+	api.Delete("/templates/:templateID", middleware.Authentication, middleware.Authorization(util.PermissionWriteTemplates), templateCtrl.DeleteByID)
 }

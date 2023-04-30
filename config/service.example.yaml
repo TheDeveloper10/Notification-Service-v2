@@ -20,7 +20,7 @@ service:
     # 128 characters
     master_client_secret: ANoY0gtFIL3DcyMLzaPEdluRRd95KTzfsZeJbhxMvBkJp1oDly7yRYwiEHUHFqbiqv1ktbfQn1XxQpPgroivbODCI5UY26bqRRlUVnoYJTWRxZxFF3quwFmNdQuj7l20
     token_signing_key: 5kpyjfDATS2SleG4
-    token_expiry_time: 300 # in seconds
+    token_expiry_time: 3600 # in seconds
 
 # configuration for the HTTP server
 http: 

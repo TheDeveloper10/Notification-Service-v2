@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fmt"
 	"notification-service/internal/util"
 
 	"github.com/gofiber/fiber/v2"
@@ -11,6 +12,7 @@ func Authorization(requiredPermissions util.PermissionsNumeric) fiber.Handler {
 	return func(c *fiber.Ctx) error {
 		user := c.Locals("user").(*jwt.Token)
 		claims := user.Claims.(jwt.MapClaims)
+		fmt.Println(claims)
 		permissions := claims["permissions"].(util.PermissionsNumeric)
 
 		if permissions.HasPermission(requiredPermissions) {
