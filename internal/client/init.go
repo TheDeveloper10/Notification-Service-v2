@@ -8,6 +8,7 @@ import (
 
 var (
 	Database *sql.DB
+	RabbitMQ *RabbitMQClient
 	Mail     IMail
 	SMS      ISMS
 	Push     IPush
@@ -15,6 +16,8 @@ var (
 
 func InitClients() {
 	Database = InitDatabaseClient(&config.Master.Database)
+
+	RabbitMQ = InitRabbitMQClient(&config.Master.RabbitMQ)
 
 	Mail = InitMailClient(
 		&config.Master.Mail,

@@ -8,11 +8,11 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type Client struct {
+type ClientHTTP struct {
 	clientSvc *service.Client
 }
 
-func (ctrl *Client) New(c *fiber.Ctx) error {
+func (ctrl *ClientHTTP) New(c *fiber.Ctx) error {
 	body := dto.Permissions{}
 	if err := c.BodyParser(&body); err != nil {
 		return err
@@ -26,7 +26,7 @@ func (ctrl *Client) New(c *fiber.Ctx) error {
 	}
 }
 
-func (ctrl *Client) IssueToken(c *fiber.Ctx) error {
+func (ctrl *ClientHTTP) IssueToken(c *fiber.Ctx) error {
 	body := dto.ClientCredentials{}
 	if err := c.BodyParser(&body); err != nil {
 		return err

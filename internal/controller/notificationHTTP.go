@@ -8,11 +8,11 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type Notification struct {
+type NotificationHTTP struct {
 	notificationSvc *service.Notification
 }
 
-func (ctrl *Notification) GetBulk(c *fiber.Ctx) error {
+func (ctrl *NotificationHTTP) GetBulk(c *fiber.Ctx) error {
 	filter := dto.NotificationBulkFilter{}
 	if err := filter.Fill(c); err != nil {
 		return err
@@ -26,7 +26,7 @@ func (ctrl *Notification) GetBulk(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(notifications)
 }
 
-func (ctrl *Notification) Send(c *fiber.Ctx) error {
+func (ctrl *NotificationHTTP) Send(c *fiber.Ctx) error {
 	body := dto.NotificationRequest{}
 	if err := c.BodyParser(&body); err != nil {
 		return err

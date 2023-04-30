@@ -8,11 +8,11 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type Template struct {
+type TemplateHTTP struct {
 	templateSvc *service.Template
 }
 
-func (ctrl *Template) GetBulk(c *fiber.Ctx) error {
+func (ctrl *TemplateHTTP) GetBulk(c *fiber.Ctx) error {
 	filter := dto.TemplateBulkFilter{}
 	if err := filter.Fill(c); err != nil {
 		return err
@@ -26,7 +26,7 @@ func (ctrl *Template) GetBulk(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(templates)
 }
 
-func (ctrl *Template) Create(c *fiber.Ctx) error {
+func (ctrl *TemplateHTTP) Create(c *fiber.Ctx) error {
 	body := dto.Template{}
 	if err := c.BodyParser(&body); err != nil {
 		return err
@@ -42,7 +42,7 @@ func (ctrl *Template) Create(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"templateId": id})
 }
 
-func (ctrl *Template) GetByID(c *fiber.Ctx) error {
+func (ctrl *TemplateHTTP) GetByID(c *fiber.Ctx) error {
 	tid := dto.TemplateID{}
 	if err := tid.Fill(c); err != nil {
 		return err
@@ -58,7 +58,7 @@ func (ctrl *Template) GetByID(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(template)
 }
 
-func (ctrl *Template) ReplaceByID(c *fiber.Ctx) error {
+func (ctrl *TemplateHTTP) ReplaceByID(c *fiber.Ctx) error {
 	tid := dto.TemplateID{}
 	if err := tid.Fill(c); err != nil {
 		return err
@@ -81,7 +81,7 @@ func (ctrl *Template) ReplaceByID(c *fiber.Ctx) error {
 	return c.SendStatus(fiber.StatusOK)
 }
 
-func (ctrl *Template) DeleteByID(c *fiber.Ctx) error {
+func (ctrl *TemplateHTTP) DeleteByID(c *fiber.Ctx) error {
 	tid := dto.TemplateID{}
 	if err := tid.Fill(c); err != nil {
 		return err

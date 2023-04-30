@@ -25,10 +25,10 @@ func SetUpRESTV1(app *fiber.App) {
 	)
 
 	var (
-		testCtrl         = controller.NewTestController()
-		templateCtrl     = controller.NewTemplateController(templateSvc)
-		notificationCtrl = controller.NewNotificationController(notificationSvc)
-		clientCtrl       = controller.NewClientController(clientSvc)
+		testCtrl         = controller.NewTestHTTPController()
+		templateCtrl     = controller.NewTemplateHTTPController(templateSvc)
+		notificationCtrl = controller.NewNotificationHTTPController(notificationSvc)
+		clientCtrl       = controller.NewClientHTTPController(clientSvc)
 	)
 
 	api := app.Group("/v1")

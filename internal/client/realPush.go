@@ -16,14 +16,14 @@ func newRealPushClientFromConfig(credentialsFile string) *realPush {
 	app, err := firebase.NewApp(ctx, nil, opt)
 	if err != nil {
 		util.Logger.Error().Msg(err.Error())
-		util.Logger.Panic().Msg("Failed to initialize firebase app")
+		util.Logger.Panic().Msg("Failed to initialize Firebase app")
 		return nil
 	}
 
 	c, err := app.Messaging(ctx)
 	if err != nil {
 		util.Logger.Error().Msg(err.Error())
-		util.Logger.Panic().Msg("Failed to initialize firebase messaging app")
+		util.Logger.Panic().Msg("Failed to initialize Firebase Messaging app")
 		return nil
 	}
 

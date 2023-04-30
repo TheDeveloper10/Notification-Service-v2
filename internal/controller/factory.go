@@ -2,24 +2,28 @@ package controller
 
 import "notification-service/internal/service"
 
-func NewTestController() *Test {
-	return &Test{}
+func NewTestHTTPController() *TestHTTP {
+	return &TestHTTP{}
 }
 
-func NewTemplateController(templateSvc *service.Template) *Template {
-	return &Template{
+func NewTestRMQController() *TestRMQ {
+	return &TestRMQ{}
+}
+
+func NewTemplateHTTPController(templateSvc *service.Template) *TemplateHTTP {
+	return &TemplateHTTP{
 		templateSvc: templateSvc,
 	}
 }
 
-func NewNotificationController(notificationSvc *service.Notification) *Notification {
-	return &Notification{
+func NewNotificationHTTPController(notificationSvc *service.Notification) *NotificationHTTP {
+	return &NotificationHTTP{
 		notificationSvc: notificationSvc,
 	}
 }
 
-func NewClientController(clientSvc *service.Client) *Client {
-	return &Client{
+func NewClientHTTPController(clientSvc *service.Client) *ClientHTTP {
+	return &ClientHTTP{
 		clientSvc: clientSvc,
 	}
 }

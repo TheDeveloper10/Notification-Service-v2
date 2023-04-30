@@ -1,7 +1,14 @@
 package api
 
-func SetUpRabbitMQV1() {
-	// url: amqp://guest:guest@ns-rabbitmq:5672
+import (
+	"notification-service/internal/client"
+	"notification-service/internal/controller"
+)
 
-	// api.Set("queueName", ctrl.Handle)
+func SetUpRabbitMQV1() {
+	var (
+		testCtrl = controller.NewTestRMQController()
+	)
+
+	client.RabbitMQ.Consume("test", testCtrl.Get)
 }
