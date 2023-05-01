@@ -21,7 +21,6 @@ type ServiceConfig struct {
 type AuthConfig struct {
 	MasterClientID     string `yaml:"master_client_id"`
 	MasterClientSecret string `yaml:"master_client_secret"`
-	TokenSigningKey    string `yaml:"token_signing_key"`
 	TokenExpiryTime    uint32 `yaml:"token_expiry_time"`
 }
 

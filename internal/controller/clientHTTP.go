@@ -48,7 +48,7 @@ func (ctrl *ClientHTTP) IssueToken(c *fiber.Ctx) error {
 }
 
 func (ctrl *ClientHTTP) Authentication(c *fiber.Ctx) error {
-	authHeader := c.Get("Authentication")
+	authHeader := c.Get("Authorization")
 	if authHeader == "" {
 		return fiber.NewError(fiber.StatusUnauthorized, "Must provide a bearer auth token")
 	}
@@ -63,7 +63,19 @@ func (ctrl *ClientHTTP) Authentication(c *fiber.Ctx) error {
 		return fiber.NewError(fiber.StatusUnauthorized, "Invalid/expired token")
 	}
 
-	c.Locals("user", activeClient)
+	c.Locals("activeClient", activeClient)
 
 	return c.Next()
+}
+
+func (ctrl *ClientHTTP) Authorization(requiredPermissions util.PermissionsNumeric) fiber.Handler {
+	return func(c *fiber.Ctx) error {
+		activeClient := c.Locals("activeClient").(*dto.ActiveClient)
+
+		if activeClient.Metadata.Permissions.HasPermission(requiredPermissions) {
+			return c.Next()
+		} else {
+			return fiber.NewError(fiber.StatusForbidden, "Access denied")
+		}
+	}
 }

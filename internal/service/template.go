@@ -9,8 +9,10 @@ import (
 
 type Template struct {
 	templateRepo repository.ITemplate
-	cache        map[uint64]*dto.Template
-	cacheMu      sync.RWMutex
+
+	// TODO: dto.CachedTemplate -> dto.Template; ExpiryTime unix timestamp
+	cache   map[uint64]*dto.Template
+	cacheMu sync.RWMutex
 }
 
 func (svc *Template) CreateTemplate(template *dto.Template) (uint64, util.StatusCode) {

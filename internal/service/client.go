@@ -79,7 +79,7 @@ func (svc *Client) GetActiveClientMetadataFromToken(token string) *dto.ActiveCli
 	activeClient := svc.activeClients[token]
 	svc.activeClientsMu.RUnlock()
 
-	if activeClient.InactiveTime <= time.Now().Unix() {
+	if activeClient != nil && activeClient.InactiveTime <= time.Now().Unix() {
 		svc.activeClientsMu.Lock()
 		delete(svc.activeClients, token)
 		svc.activeClientsMu.Unlock()
