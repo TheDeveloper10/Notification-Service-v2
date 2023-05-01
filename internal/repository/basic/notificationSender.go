@@ -13,7 +13,7 @@ func (nsr *NotificationSenderRepository) SendEmail(notification *dto.Notificatio
 	err := client.Mail.MailSingle(notification.Title, notification.Message, notification.ContactInfo)
 
 	if err == nil {
-		util.Logger.Info().Msg("Sent an email")
+		util.Logger.Info().Msg("Sent an email notification")
 		return util.StatusSuccess
 	}
 	return nsr.handleError(err)
@@ -23,7 +23,7 @@ func (nsr *NotificationSenderRepository) SendSMS(notification *dto.Notification)
 	err := client.SMS.SendSMS(notification.Title, notification.Message, notification.ContactInfo)
 
 	if err == nil {
-		util.Logger.Info().Msg("Sent an SMS")
+		util.Logger.Info().Msg("Sent an SMS notification")
 		return util.StatusSuccess
 	}
 	return nsr.handleError(err)

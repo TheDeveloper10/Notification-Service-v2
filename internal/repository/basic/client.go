@@ -19,6 +19,7 @@ func (cr *ClientRepository) CreateClient(clientObj *dto.Client) util.StatusCode 
 		return util.StatusInternal
 	}
 
+	util.Logger.Info().Msgf("Created client %d", clientObj.ID)
 	return util.StatusSuccess
 }
 
@@ -42,7 +43,7 @@ func (cr *ClientRepository) GetClient(clientCredentials *dto.ClientCredentials) 
 			return nil, util.StatusInternal
 		}
 
-		util.Logger.Info().Msgf("Found client %d", clientCredentials.ID)
+		util.Logger.Info().Msgf("Fetched client %d", clientCredentials.ID)
 		return &dto.ClientMetadata{
 			ID:          clientCredentials.ID,
 			Permissions: permissions,
