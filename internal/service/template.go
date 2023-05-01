@@ -73,7 +73,7 @@ func (svc *Template) writeTemplateToCache(template *dto.Template) {
 
 	svc.cache[template.ID] = &dto.CachedTemplate{
 		Template:   template,
-		ExpiryTime: time.Now().Add(time.Second * time.Duration(config.Master.Service.Cache.TemplatesCacheEntryExpiry)).Unix(),
+		ExpiryTime: time.Now().Unix() + int64(config.Master.Service.Cache.TemplatesCacheEntryExpiry),
 	}
 }
 
@@ -98,4 +98,8 @@ func (svc *Template) deleteTemplateFromCache(templateID uint64) {
 	svc.cacheMu.Lock()
 	delete(svc.cache, templateID)
 	svc.cacheMu.Unlock()
+}
+
+func (svc *Template) GetCachedTemplatesCount() int {
+	return len(svc.cache)
 }

@@ -88,3 +88,7 @@ func (svc *Client) GetActiveClientMetadataFromToken(token string) *dto.ActiveCli
 
 	return activeClient
 }
+
+func (svc *Client) GetActiveClientsCount() int {
+	return len(svc.activeClients)
+}

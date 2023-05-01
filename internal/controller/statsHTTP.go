@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"notification-service/internal/dto"
+	"notification-service/internal/service"
 	"sync"
 	"time"
 
@@ -10,6 +11,9 @@ import (
 )
 
 type StatsHTTP struct {
+	clientSvc   *service.Client
+	templateSvc *service.Template
+
 	executionTimesHTTP   map[string]*dto.ExecutionTimes
 	executionTimesHTTPMu sync.Mutex
 }
@@ -17,6 +21,8 @@ type StatsHTTP struct {
 func (ctrl *StatsHTTP) Get(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"executionTimesHTTP": ctrl.executionTimesHTTP,
+		"activeClientsHTTP":  ctrl.clientSvc.GetActiveClientsCount(),
+		"cachedTemplates":    ctrl.templateSvc.GetCachedTemplatesCount(),
 	})
 }
 

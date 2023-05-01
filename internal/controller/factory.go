@@ -14,8 +14,11 @@ func NewTestRMQController() *TestRMQ {
 	return &TestRMQ{}
 }
 
-func NewStatsHTTPController() *StatsHTTP {
+func NewStatsHTTPController(clientSvc *service.Client, templateSvc *service.Template) *StatsHTTP {
 	return &StatsHTTP{
+		clientSvc:   clientSvc,
+		templateSvc: templateSvc,
+
 		executionTimesHTTP:   map[string]*dto.ExecutionTimes{},
 		executionTimesHTTPMu: sync.Mutex{},
 	}

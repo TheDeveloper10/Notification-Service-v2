@@ -26,7 +26,7 @@ type AuthConfig struct {
 }
 
 type CacheConfig struct {
-	TemplatesCacheEntryExpiry uint32 `yaml"templates_cache_entry_expiry"`
+	TemplatesCacheEntryExpiry uint32 `yaml:"templates_cache_entry_expiry"`
 }
 
 type HTTPConfig struct {
