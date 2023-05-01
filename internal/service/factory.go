@@ -12,6 +12,9 @@ func NewTemplateService(templateRepo repository.ITemplate) *Template {
 
 		cache:   map[uint64]*dto.CachedTemplate{},
 		cacheMu: sync.RWMutex{},
+
+		cacheHits:   0,
+		cacheMisses: 0,
 	}
 }
 

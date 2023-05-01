@@ -22,7 +22,10 @@ func (ctrl *StatsHTTP) Get(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
 		"executionTimesHTTP": ctrl.executionTimesHTTP,
 		"activeClientsHTTP":  ctrl.clientSvc.GetActiveClientsCount(),
-		"cachedTemplates":    ctrl.templateSvc.GetCachedTemplatesCount(),
+
+		"cachedTemplatesCount": ctrl.templateSvc.GetCachedTemplatesCount(),
+		"hitsTemplatesCache":   ctrl.templateSvc.GetTemplatesCacheHits(),
+		"missesTemplatesCache": ctrl.templateSvc.GetTemplatesCacheMisses(),
 	})
 }
 
