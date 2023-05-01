@@ -15,8 +15,7 @@ func SetUpRESTV1(app *fiber.App) {
 	api.Get("/test", statsHTTPCtrl.Middleware, testHTTPCtrl.Get)
 	api.Post("/test", statsHTTPCtrl.Middleware, testHTTPCtrl.Post)
 
-	// TODO: add auth middleware
-	api.Get("/stats", statsHTTPCtrl.Middleware, statsHTTPCtrl.Get)
+	api.Get("/stats", statsHTTPCtrl.Middleware, clientHTTPCtrl.Auth(util.PermissionReadStats), statsHTTPCtrl.Get)
 
 	api.Post("/clients", statsHTTPCtrl.Middleware, clientHTTPCtrl.Auth(util.PermissionManageClients), clientHTTPCtrl.New)
 	api.Post("/clients/token", statsHTTPCtrl.Middleware, clientHTTPCtrl.IssueToken)
