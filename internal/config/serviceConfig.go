@@ -16,12 +16,17 @@ type ServiceConfig struct {
 	NotificationTypes util.Strings `yaml:"notification_types"`
 	AllowedLanguages  util.Strings `yaml:"allowed_languages"`
 	Auth              AuthConfig   `yaml:"auth"`
+	Cache             CacheConfig  `yaml:"cache"`
 }
 
 type AuthConfig struct {
 	MasterClientID     string `yaml:"master_client_id"`
 	MasterClientSecret string `yaml:"master_client_secret"`
 	TokenExpiryTime    uint32 `yaml:"token_expiry_time"`
+}
+
+type CacheConfig struct {
+	TemplatesCacheEntryExpiry uint32 `yaml"templates_cache_entry_expiry"`
 }
 
 type HTTPConfig struct {

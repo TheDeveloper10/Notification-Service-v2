@@ -9,7 +9,7 @@ import (
 func NewTemplateService(templateRepo repository.ITemplate) *Template {
 	return &Template{
 		templateRepo: templateRepo,
-		cache:        map[uint64]*dto.Template{},
+		cache:        map[uint64]*dto.CachedTemplate{},
 		cacheMu:      sync.RWMutex{},
 	}
 }
