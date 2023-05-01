@@ -11,8 +11,9 @@ import (
 )
 
 type StatsHTTP struct {
-	clientSvc   *service.Client
-	templateSvc *service.Template
+	clientSvc       *service.Client
+	templateSvc     *service.Template
+	notificationSvc *service.Notification
 
 	executionTimesHTTP   map[string]*dto.ExecutionTimes
 	executionTimesHTTPMu sync.Mutex
@@ -26,8 +27,13 @@ func (ctrl *StatsHTTP) Get(c *fiber.Ctx) error {
 		"activeClientsHTTP":  ctrl.clientSvc.GetActiveClientsCount(),
 
 		"cachedTemplatesCount": ctrl.templateSvc.GetCachedTemplatesCount(),
-		"hitsTemplatesCache":   ctrl.templateSvc.GetTemplatesCacheHits(),
-		"missesTemplatesCache": ctrl.templateSvc.GetTemplatesCacheMisses(),
+		"templatesCacheHits":   ctrl.templateSvc.GetTemplatesCacheHitStats(),
+
+		"notifications": fiber.Map{
+			"email": ctrl.notificationSvc.GetEmailStats(),
+			"sms":   ctrl.notificationSvc.GetSMSStats(),
+			"push":  ctrl.notificationSvc.GetPushStats(),
+		},
 
 		"upTime": time.Now().Unix() - ctrl.startTime.Unix(),
 	})

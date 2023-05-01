@@ -8,11 +8,10 @@ import (
 
 func NewTemplateService(templateRepo repository.ITemplate) *Template {
 	return &Template{
-		templateRepo: templateRepo,
-		cache:        map[uint64]*dto.CachedTemplate{},
-		cacheMu:      sync.RWMutex{},
-		cacheHits:    0,
-		cacheMisses:  0,
+		templateRepo:   templateRepo,
+		cache:          map[uint64]*dto.CachedTemplate{},
+		cacheMu:        sync.RWMutex{},
+		cacheHitsStats: dto.SuccessFailureStats{},
 	}
 }
 
@@ -22,6 +21,10 @@ func NewNotificationService(templateSvc *Template, notificationSenderRepo reposi
 
 		notificationSenderRepo: notificationSenderRepo,
 		notificationRepo:       notificationRepo,
+
+		emailNotificationsStats: dto.SuccessFailureStats{},
+		smsNotificationsStats:   dto.SuccessFailureStats{},
+		pushNotificationsStats:  dto.SuccessFailureStats{},
 	}
 }
 

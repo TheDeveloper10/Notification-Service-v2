@@ -10,6 +10,7 @@ type notificationType struct {
 	ContactInfo *string
 	Message     *string
 	SendFunc    func(*dto.Notification) util.StatusCode
+	Stats       *dto.SuccessFailureStats
 }
 
 type targetData struct {

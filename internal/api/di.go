@@ -23,7 +23,7 @@ var (
 	testHTTPCtrl = controller.NewTestHTTPController()
 	testRMQCtrl  = controller.NewTestRMQController()
 
-	statsHTTPCtrl = controller.NewStatsHTTPController(clientSvc, templateSvc)
+	statsHTTPCtrl = controller.NewStatsHTTPController(clientSvc, templateSvc, notificationSvc)
 
 	templateHTTPCtrl = controller.NewTemplateHTTPController(templateSvc)
 	templateRMQCtrl  = controller.NewTemplateRMQController(templateSvc)

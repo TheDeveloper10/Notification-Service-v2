@@ -15,8 +15,8 @@ type Template struct {
 	cache           map[uint64]*dto.CachedTemplate
 	cacheMu         sync.RWMutex
 	lastCleanupTime int64
-	cacheHits       uint32
-	cacheMisses     uint32
+
+	cacheHitsStats dto.SuccessFailureStats
 }
 
 func (svc *Template) CreateTemplate(template *dto.Template) (uint64, util.StatusCode) {
@@ -110,7 +110,7 @@ func (svc *Template) writeTemplateToCache(template *dto.Template) {
 func (svc *Template) getTemplateFromCache(templateID uint64) *dto.Template {
 	svc.cacheMu.RLock()
 	if cachedTemplate, ok := svc.cache[templateID]; ok {
-		svc.cacheHits++
+		svc.cacheHitsStats.AddSuccesses(1)
 		svc.cacheMu.RUnlock()
 
 		if cachedTemplate.IsExpired() {
@@ -120,7 +120,7 @@ func (svc *Template) getTemplateFromCache(templateID uint64) *dto.Template {
 
 		return cachedTemplate.Template
 	} else {
-		svc.cacheMisses++
+		svc.cacheHitsStats.AddFailures(1)
 	}
 	svc.cacheMu.RUnlock()
 
@@ -137,10 +137,6 @@ func (svc *Template) GetCachedTemplatesCount() int {
 	return len(svc.cache)
 }
 
-func (svc *Template) GetTemplatesCacheHits() uint32 {
-	return svc.cacheHits
-}
-
-func (svc *Template) GetTemplatesCacheMisses() uint32 {
-	return svc.cacheMisses
+func (svc *Template) GetTemplatesCacheHitStats() *dto.SuccessFailureStats {
+	return &svc.cacheHitsStats
 }

@@ -12,6 +12,10 @@ type Notification struct {
 
 	notificationSenderRepo repository.INotificationSender
 	notificationRepo       repository.INotification
+
+	emailNotificationsStats dto.SuccessFailureStats
+	smsNotificationsStats   dto.SuccessFailureStats
+	pushNotificationsStats  dto.SuccessFailureStats
 }
 
 func (svc *Notification) SendNotifications(notificationReq *dto.NotificationRequest) ([]string, util.StatusCode) {
@@ -57,16 +61,19 @@ func (svc *Notification) handleTarget(tarData *targetData, se *syncErrors) {
 			ContactInfo: tarData.target.Email,
 			Message:     tarData.template.Body.Email,
 			SendFunc:    svc.notificationSenderRepo.SendEmail,
+			Stats:       &svc.emailNotificationsStats,
 		},
 		{
 			ContactInfo: tarData.target.PhoneNumber,
 			Message:     tarData.template.Body.SMS,
 			SendFunc:    svc.notificationSenderRepo.SendSMS,
+			Stats:       &svc.smsNotificationsStats,
 		},
 		{
 			ContactInfo: tarData.target.FCMRegistrationToken,
 			Message:     tarData.template.Body.Push,
 			SendFunc:    svc.notificationSenderRepo.SendPush,
+			Stats:       &svc.pushNotificationsStats,
 		},
 	}
 
@@ -88,17 +95,33 @@ func (svc *Notification) handleTarget(tarData *targetData, se *syncErrors) {
 		status := nt.SendFunc(&notification)
 		if status != util.StatusSuccess {
 			se.addError(fmt.Sprintf("Failed to send message for target %d (%s)", tarData.index, *nt.ContactInfo))
+			nt.Stats.AddFailures(1)
 			continue
 		}
 
 		_, status = svc.notificationRepo.SaveNotification(&notification)
 		if status != util.StatusSuccess {
 			se.addError(fmt.Sprintf("Failed to save sent message for target %d (%s)", tarData.index, *nt.ContactInfo))
+			nt.Stats.AddFailures(1)
 			continue
 		}
+
+		nt.Stats.AddSuccesses(1)
 	}
 }
 
 func (svc *Notification) GetBulkNotifications(filter *dto.NotificationBulkFilter) ([]dto.Notification, util.StatusCode) {
 	return svc.notificationRepo.GetBulkNotifications(filter)
+}
+
+func (svc *Notification) GetEmailStats() *dto.SuccessFailureStats {
+	return &svc.emailNotificationsStats
+}
+
+func (svc *Notification) GetSMSStats() *dto.SuccessFailureStats {
+	return &svc.smsNotificationsStats
+}
+
+func (svc *Notification) GetPushStats() *dto.SuccessFailureStats {
+	return &svc.pushNotificationsStats
 }
