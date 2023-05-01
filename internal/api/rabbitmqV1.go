@@ -9,6 +9,7 @@ func SetUpRabbitMQV1() {
 	client.RabbitMQ.Consume("test", testRMQCtrl.Get)
 
 	client.RabbitMQ.Consume("write_template", templateRMQCtrl.Write)
+	client.RabbitMQ.Consume("get_template", templateRMQCtrl.Get)
 
 	client.RabbitMQ.Consume("send_notifications", notificationRMQCtrl.Send)
 

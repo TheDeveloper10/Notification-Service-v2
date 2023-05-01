@@ -43,8 +43,8 @@ func (ctrl *TemplateHTTP) Create(c *fiber.Ctx) error {
 }
 
 func (ctrl *TemplateHTTP) GetByID(c *fiber.Ctx) error {
-	tid := dto.TemplateID{}
-	if err := tid.Fill(c); err != nil {
+	tid := dto.ID{}
+	if err := tid.FillTemplate(c); err != nil {
 		return err
 	}
 
@@ -59,8 +59,8 @@ func (ctrl *TemplateHTTP) GetByID(c *fiber.Ctx) error {
 }
 
 func (ctrl *TemplateHTTP) ReplaceByID(c *fiber.Ctx) error {
-	tid := dto.TemplateID{}
-	if err := tid.Fill(c); err != nil {
+	tid := dto.ID{}
+	if err := tid.FillTemplate(c); err != nil {
 		return err
 	}
 
@@ -82,8 +82,8 @@ func (ctrl *TemplateHTTP) ReplaceByID(c *fiber.Ctx) error {
 }
 
 func (ctrl *TemplateHTTP) DeleteByID(c *fiber.Ctx) error {
-	tid := dto.TemplateID{}
-	if err := tid.Fill(c); err != nil {
+	tid := dto.ID{}
+	if err := tid.FillTemplate(c); err != nil {
 		return err
 	}
 
