@@ -26,6 +26,8 @@ service:
     templates_cache_limit: 10000
     # time (in seconds) for an entry in templates cache to expire
     templates_cache_entry_expiry: 1800
+    # minimum time (in seconds) between cleanups
+    templates_cache_cleanup_time: 10
 
 # configuration for the HTTP server
 http: 

@@ -12,8 +12,9 @@ import (
 type Template struct {
 	templateRepo repository.ITemplate
 
-	cache   map[uint64]*dto.CachedTemplate
-	cacheMu sync.RWMutex
+	cache           map[uint64]*dto.CachedTemplate
+	cacheMu         sync.RWMutex
+	lastCleanupTime int64
 }
 
 func (svc *Template) CreateTemplate(template *dto.Template) (uint64, util.StatusCode) {
@@ -68,8 +69,35 @@ func (svc *Template) DeleteTemplate(templateID uint64) util.StatusCode {
 }
 
 func (svc *Template) writeTemplateToCache(template *dto.Template) {
-	svc.cacheMu.Lock()
-	defer svc.cacheMu.Unlock()
+	if uint32(len(svc.cache)) >= config.Master.Service.Cache.TemplatesCacheLimit {
+		util.Logger.Warn().Msg("Templates cache requires a cleanup")
+
+		if time.Now().Unix()-svc.lastCleanupTime < int64(config.Master.Service.Cache.TemplatesCacheCleanupTime) {
+			util.Logger.Warn().Msg("Templates cache clean timeout")
+			return
+		}
+
+		svc.lastCleanupTime = time.Now().Unix()
+
+		svc.cacheMu.Lock()
+		defer svc.cacheMu.Unlock()
+
+		toRemoveArr := []uint64{}
+		for k, v := range svc.cache {
+			if v.IsExpired() {
+				toRemoveArr = append(toRemoveArr, k)
+			}
+		}
+
+		for _, toRemove := range toRemoveArr {
+			delete(svc.cache, toRemove)
+		}
+
+		util.Logger.Info().Msgf("Performed cache cleanup: removed %d caches", len(toRemoveArr))
+	} else {
+		svc.cacheMu.Lock()
+		defer svc.cacheMu.Unlock()
+	}
 
 	svc.cache[template.ID] = &dto.CachedTemplate{
 		Template:   template,
