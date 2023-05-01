@@ -91,9 +91,7 @@ func (ctrl *TemplateRMQ) GetBulk(request *amqp.Delivery) (any, bool) {
 	templates, status := ctrl.templateSvc.GetBulkTemplates(&body)
 	if status == util.StatusSuccess {
 		return templates, true
-	} else if status == util.StatusNotFound {
-		return &dto.Error{Error: "Template not found"}, true
 	} else {
-		return &dto.Error{Error: "Failed to get template"}, true
+		return &dto.Error{Error: "Failed to get templates"}, true
 	}
 }

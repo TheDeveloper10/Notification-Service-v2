@@ -7,12 +7,34 @@ import (
 )
 
 type NotificationBulkFilter struct {
-	AppID              *string
-	TemplateID         *uint64
-	StartTime          *uint32
-	EndTime            *uint32
-	PerPage            uint32
-	LastNotificationID uint64
+	AppID              *string `json:"appId"`
+	TemplateID         *uint64 `json:"templateId"`
+	StartTime          *uint32 `json:"startTime"`
+	EndTime            *uint32 `json:"endTime"`
+	PerPage            uint32  `json:"perPage"`
+	LastNotificationID uint64  `json:"lastNotificationId"`
+}
+
+func (nbf *NotificationBulkFilter) Validate() error {
+	if nbf.TemplateID != nil && *nbf.TemplateID <= 0 {
+		nbf.TemplateID = nil
+	}
+
+	if nbf.StartTime != nil && *nbf.StartTime <= 0 {
+		nbf.StartTime = nil
+	}
+
+	if nbf.EndTime != nil && *nbf.EndTime <= 0 {
+		nbf.EndTime = nil
+	}
+
+	if nbf.PerPage == 0 {
+		nbf.PerPage = 20
+	} else if nbf.PerPage > 100 {
+		nbf.PerPage = 100
+	}
+
+	return nil
 }
 
 func (nbf *NotificationBulkFilter) Fill(c *fiber.Ctx) error {
@@ -27,7 +49,7 @@ func (nbf *NotificationBulkFilter) Fill(c *fiber.Ctx) error {
 	templateIDStr := c.Query("templateId")
 	if templateIDStr != "" {
 		templateIDNum, err := strconv.ParseUint(templateIDStr, 10, 64)
-		if err == nil {
+		if err == nil && templateIDNum > 0 {
 			nbf.TemplateID = &templateIDNum
 		} else {
 			return fiber.NewError(fiber.StatusBadRequest, "Template ID must be a positive integer")
@@ -63,6 +85,10 @@ func (nbf *NotificationBulkFilter) Fill(c *fiber.Ctx) error {
 			nbf.PerPage = uint32(perPageNum)
 		} else {
 			return fiber.NewError(fiber.StatusBadRequest, "Per Page must be a positive integer")
+		}
+
+		if perPageNum > 100 {
+			nbf.PerPage = 100
 		}
 	}
 

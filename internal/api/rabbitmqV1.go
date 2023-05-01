@@ -14,6 +14,7 @@ func SetUpRabbitMQV1() {
 	client.RabbitMQ.Consume("delete_template", templateRMQCtrl.Delete)
 
 	client.RabbitMQ.Consume("send_notifications", notificationRMQCtrl.Send)
+	client.RabbitMQ.Consume("get_notifications_bulk", notificationRMQCtrl.GetBulk)
 
 	util.Logger.Info().Msg("Initialized RabbitMQ V1 routes")
 }

@@ -33,4 +33,20 @@ func (ctrl *NotificationRMQ) Send(request *amqp.Delivery) (any, bool) {
 	return &dto.Errors{Errors: errs}, true
 }
 
-// TODO: get bulk
+func (ctrl *NotificationRMQ) GetBulk(request *amqp.Delivery) (any, bool) {
+	body := dto.NotificationBulkFilter{}
+
+	err := json.Unmarshal(request.Body, &body)
+	if err != nil {
+		return &dto.Error{Error: "Body must be in JSON"}, true
+	} else if err := body.Validate(); err != nil {
+		return &dto.Error{Error: err.Error()}, true
+	}
+
+	notifications, status := ctrl.notificationSvc.GetBulkNotifications(&body)
+	if status == util.StatusSuccess {
+		return notifications, true
+	} else {
+		return &dto.Error{Error: "Failed to get notifications"}, true
+	}
+}
