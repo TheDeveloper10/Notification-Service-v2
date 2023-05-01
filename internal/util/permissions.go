@@ -10,6 +10,7 @@ const (
 	PermissionReadTemplates
 	PermissionSendNotifications
 	PermissionReadNotifications
+	PermissionReadStats
 	PermissionAll PermissionsNumeric = 255
 )
 
@@ -19,6 +20,7 @@ var permissionsMap = map[PermissionString]PermissionsNumeric{
 	"read_templates":     PermissionReadTemplates,
 	"send_notifications": PermissionSendNotifications,
 	"read_notifications": PermissionReadNotifications,
+	"read_stats":         PermissionReadStats,
 }
 
 func (pn *PermissionsNumeric) ToArray() Permissions {
