@@ -58,6 +58,10 @@ func (svc *Client) IssueToken(clientCredentials *dto.ClientCredentials) (string,
 		}
 	}
 
+	if uint32(len(svc.activeClients)) >= config.Master.Service.Auth.MaxActiveClients {
+		return "", util.StatusTooMany
+	}
+
 	token, err := util.GenerateString(128)
 	if err != nil {
 		return "", util.StatusInternal

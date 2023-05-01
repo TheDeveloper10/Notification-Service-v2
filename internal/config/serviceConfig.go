@@ -23,9 +23,11 @@ type AuthConfig struct {
 	MasterClientID     string `yaml:"master_client_id"`
 	MasterClientSecret string `yaml:"master_client_secret"`
 	TokenExpiryTime    uint32 `yaml:"token_expiry_time"`
+	MaxActiveClients   uint32 `yaml:"max_active_clients"`
 }
 
 type CacheConfig struct {
+	TemplatesCacheLimit       uint32 `yaml:"templates_cache_limit"`
 	TemplatesCacheEntryExpiry uint32 `yaml:"templates_cache_entry_expiry"`
 }
 

@@ -20,7 +20,10 @@ service:
     # 128 characters
     master_client_secret: ANoY0gtFIL3DcyMLzaPEdluRRd95KTzfsZeJbhxMvBkJp1oDly7yRYwiEHUHFqbiqv1ktbfQn1XxQpPgroivbODCI5UY26bqRRlUVnoYJTWRxZxFF3quwFmNdQuj7l20
     token_expiry_time: 3600 # in seconds
+    max_active_clients: 10000
   cache:
+    # maximum number of entries in the templates cache
+    templates_cache_limit: 10000
     # time (in seconds) for an entry in templates cache to expire
     templates_cache_entry_expiry: 1800
 

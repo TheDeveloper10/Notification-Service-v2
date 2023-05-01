@@ -42,6 +42,8 @@ func (ctrl *ClientHTTP) IssueToken(c *fiber.Ctx) error {
 		})
 	} else if status == util.StatusError {
 		return fiber.NewError(fiber.StatusInternalServerError, "Failed to issue token")
+	} else if status == util.StatusTooMany {
+		return fiber.NewError(fiber.StatusInternalServerError, "Too many clients")
 	}
 
 	return fiber.NewError(fiber.StatusForbidden, "Invalid credentials")

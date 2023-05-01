@@ -19,14 +19,14 @@ func main() {
 		fiberApp = api.NewFiberApp()
 	)
 
-	// HTTP REST V1
+	// HTTP REST API V1
 	if config.Master.Service.APIs.Has(config.HTTP_REST_V1_API) {
 		hasHTTPHandler = true
 
 		api.SetUpRESTV1(fiberApp)
 	}
 
-	// RabbitMQ V1
+	// RabbitMQ API V1
 	if config.Master.Service.APIs.Has(config.RABBITMQ_V1_API) {
 		api.SetUpRabbitMQV1()
 	}
