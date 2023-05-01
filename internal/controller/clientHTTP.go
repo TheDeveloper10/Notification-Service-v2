@@ -47,35 +47,29 @@ func (ctrl *ClientHTTP) IssueToken(c *fiber.Ctx) error {
 	return fiber.NewError(fiber.StatusForbidden, "Invalid credentials")
 }
 
-func (ctrl *ClientHTTP) Authentication(c *fiber.Ctx) error {
-	authHeader := c.Get("Authorization")
-	if authHeader == "" {
-		return fiber.NewError(fiber.StatusUnauthorized, "Must provide a bearer auth token")
-	}
-
-	token, found := strings.CutPrefix(authHeader, "Bearer ")
-	if !found {
-		return fiber.NewError(fiber.StatusUnauthorized, "Must provide a bearer auth token")
-	}
-
-	activeClient := ctrl.clientSvc.GetActiveClientMetadataFromToken(token)
-	if activeClient == nil {
-		return fiber.NewError(fiber.StatusUnauthorized, "Invalid/expired token")
-	}
-
-	c.Locals("activeClient", activeClient)
-
-	return c.Next()
-}
-
-func (ctrl *ClientHTTP) Authorization(requiredPermissions util.PermissionsNumeric) fiber.Handler {
+func (ctrl *ClientHTTP) Auth(requiredPermissions util.PermissionsNumeric) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		activeClient := c.Locals("activeClient").(*dto.ActiveClient)
+		authHeader := c.Get("Authorization")
+		if authHeader == "" {
+			return fiber.NewError(fiber.StatusUnauthorized, "Must provide a bearer auth token")
+		}
 
-		if activeClient.Metadata.Permissions.HasPermission(requiredPermissions) {
-			return c.Next()
-		} else {
+		token, found := strings.CutPrefix(authHeader, "Bearer ")
+		if !found {
+			return fiber.NewError(fiber.StatusUnauthorized, "Must provide a bearer auth token")
+		}
+
+		activeClient := ctrl.clientSvc.GetActiveClientMetadataFromToken(token)
+		if activeClient == nil {
+			return fiber.NewError(fiber.StatusUnauthorized, "Invalid/expired token")
+		}
+
+		if !activeClient.Metadata.Permissions.HasPermission(requiredPermissions) {
 			return fiber.NewError(fiber.StatusForbidden, "Access denied")
 		}
+
+		c.Locals("activeClient", activeClient)
+
+		return c.Next()
 	}
 }
