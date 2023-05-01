@@ -16,8 +16,8 @@ func NewTestRMQController() *TestRMQ {
 
 func NewStatsHTTPController() *StatsHTTP {
 	return &StatsHTTP{
-		executionTimes:   map[string]*dto.ExecutionTimes{},
-		executionTimesMu: sync.Mutex{},
+		executionTimesHTTP:   map[string]*dto.ExecutionTimes{},
+		executionTimesHTTPMu: sync.Mutex{},
 	}
 }
 

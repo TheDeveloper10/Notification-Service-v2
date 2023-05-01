@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"fmt"
 	"notification-service/internal/dto"
 	"sync"
 	"time"
@@ -9,13 +10,13 @@ import (
 )
 
 type StatsHTTP struct {
-	executionTimes   map[string]*dto.ExecutionTimes
-	executionTimesMu sync.Mutex
+	executionTimesHTTP   map[string]*dto.ExecutionTimes
+	executionTimesHTTPMu sync.Mutex
 }
 
 func (ctrl *StatsHTTP) Get(c *fiber.Ctx) error {
 	return c.Status(fiber.StatusOK).JSON(fiber.Map{
-		"executionTimes": ctrl.executionTimes,
+		"executionTimesHTTP": ctrl.executionTimesHTTP,
 	})
 }
 
@@ -24,19 +25,20 @@ func (ctrl *StatsHTTP) Middleware(c *fiber.Ctx) error {
 	err := c.Next()
 	duration := time.Since(start)
 
-	path := c.Path()
+	key := fmt.Sprintf("%s %s", c.Method(), c.Route().Path)
 
-	ctrl.executionTimesMu.Lock()
-	defer ctrl.executionTimesMu.Unlock()
+	ctrl.executionTimesHTTPMu.Lock()
+	defer ctrl.executionTimesHTTPMu.Unlock()
 
-	executionTimes := ctrl.executionTimes[path]
+	executionTimes := ctrl.executionTimesHTTP[key]
 	if executionTimes == nil {
 		executionTimes = &dto.ExecutionTimes{}
 	}
+
 	executionTimes.TotalCalls++
 	executionTimes.TotalTime += uint64(duration.Nanoseconds())
 
-	ctrl.executionTimes[path] = executionTimes
+	ctrl.executionTimesHTTP[key] = executionTimes
 
 	return err
 }
