@@ -5,13 +5,15 @@ import (
 	"notification-service/internal/dto"
 	"notification-service/internal/repository"
 	"notification-service/internal/util"
+	"sync"
 	"time"
-
-	"github.com/golang-jwt/jwt/v4"
 )
 
 type Client struct {
 	clientRepo repository.IClient
+
+	activeClients   map[string]*dto.ActiveClient
+	activeClientsMu sync.RWMutex
 }
 
 func (svc *Client) NewClient(permissions *dto.Permissions) (*dto.Client, util.StatusCode) {
@@ -56,27 +58,33 @@ func (svc *Client) IssueToken(clientCredentials *dto.ClientCredentials) (string,
 		}
 	}
 
-	token, err := svc.newToken(clientMetadata.Permissions)
+	token, err := util.GenerateString(128)
 	if err != nil {
-		util.Logger.Error().Msg(err.Error())
 		return "", util.StatusInternal
+	}
+
+	svc.activeClientsMu.Lock()
+	defer svc.activeClientsMu.Unlock()
+
+	svc.activeClients[token] = &dto.ActiveClient{
+		Metadata:     clientMetadata,
+		InactiveTime: time.Now().Add(time.Second * time.Duration(config.Master.Service.Auth.TokenExpiryTime)).Unix(),
 	}
 
 	return token, util.StatusSuccess
 }
 
-func (svc *Client) newToken(permissions util.PermissionsNumeric) (string, error) {
-	claims := jwt.MapClaims{
-		"permissions": permissions,
-		"exp":         time.Now().Add(time.Second * time.Duration(config.Master.Service.Auth.TokenExpiryTime)).Unix(),
+func (svc *Client) GetActiveClientMetadataFromToken(token string) *dto.ActiveClient {
+	svc.activeClientsMu.RLock()
+	activeClient := svc.activeClients[token]
+	svc.activeClientsMu.RUnlock()
+
+	if activeClient.InactiveTime <= time.Now().Unix() {
+		svc.activeClientsMu.Lock()
+		delete(svc.activeClients, token)
+		svc.activeClientsMu.Unlock()
+		return nil
 	}
 
-	tokenObj := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-
-	token, err := tokenObj.SignedString([]byte(config.Master.Service.Auth.TokenSigningKey))
-	if err != nil {
-		return "", err
-	}
-
-	return token, nil
+	return activeClient
 }

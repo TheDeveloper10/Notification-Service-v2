@@ -15,17 +15,17 @@ func SetUpRESTV1(app *fiber.App) {
 	api.Get("/test", testHTTPCtrl.Get)
 	api.Post("/test", testHTTPCtrl.Post)
 
-	api.Post("/clients", middleware.Authentication, middleware.Authorization(util.PermissionManageClients), clientHTTPCtrl.New)
+	api.Post("/clients", clientHTTPCtrl.Authentication, middleware.Authorization(util.PermissionManageClients), clientHTTPCtrl.New)
 	api.Post("/clients/token", clientHTTPCtrl.IssueToken)
 
-	api.Get("/notifications", middleware.Authentication, middleware.Authorization(util.PermissionReadNotifications), notificationHTTPCtrl.GetBulk)
-	api.Post("/notifications", middleware.Authentication, middleware.Authorization(util.PermissionSendNotifications), notificationHTTPCtrl.Send)
+	api.Get("/notifications", clientHTTPCtrl.Authentication, middleware.Authorization(util.PermissionReadNotifications), notificationHTTPCtrl.GetBulk)
+	api.Post("/notifications", clientHTTPCtrl.Authentication, middleware.Authorization(util.PermissionSendNotifications), notificationHTTPCtrl.Send)
 
-	api.Get("/templates", middleware.Authentication, middleware.Authorization(util.PermissionReadTemplates), templateHTTPCtrl.GetBulk)
-	api.Post("/templates", middleware.Authentication, middleware.Authorization(util.PermissionWriteTemplates), templateHTTPCtrl.Create)
-	api.Get("/templates/:templateID", middleware.Authentication, middleware.Authorization(util.PermissionReadTemplates), templateHTTPCtrl.GetByID)
-	api.Put("/templates/:templateID", middleware.Authentication, middleware.Authorization(util.PermissionWriteTemplates), templateHTTPCtrl.ReplaceByID)
-	api.Delete("/templates/:templateID", middleware.Authentication, middleware.Authorization(util.PermissionWriteTemplates), templateHTTPCtrl.DeleteByID)
+	api.Get("/templates", clientHTTPCtrl.Authentication, middleware.Authorization(util.PermissionReadTemplates), templateHTTPCtrl.GetBulk)
+	api.Post("/templates", clientHTTPCtrl.Authentication, middleware.Authorization(util.PermissionWriteTemplates), templateHTTPCtrl.Create)
+	api.Get("/templates/:templateID", clientHTTPCtrl.Authentication, middleware.Authorization(util.PermissionReadTemplates), templateHTTPCtrl.GetByID)
+	api.Put("/templates/:templateID", clientHTTPCtrl.Authentication, middleware.Authorization(util.PermissionWriteTemplates), templateHTTPCtrl.ReplaceByID)
+	api.Delete("/templates/:templateID", clientHTTPCtrl.Authentication, middleware.Authorization(util.PermissionWriteTemplates), templateHTTPCtrl.DeleteByID)
 
 	util.Logger.Info().Msg("Initialized REST V1 routes")
 }

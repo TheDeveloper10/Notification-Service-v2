@@ -25,6 +25,8 @@ func NewNotificationService(templateSvc *Template, notificationSenderRepo reposi
 
 func NewClientService(clientRepo repository.IClient) *Client {
 	return &Client{
-		clientRepo: clientRepo,
+		clientRepo:      clientRepo,
+		activeClients:   map[string]*dto.ActiveClient{},
+		activeClientsMu: sync.RWMutex{},
 	}
 }

@@ -4,6 +4,7 @@ import (
 	"notification-service/internal/dto"
 	"notification-service/internal/service"
 	"notification-service/internal/util"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -44,4 +45,25 @@ func (ctrl *ClientHTTP) IssueToken(c *fiber.Ctx) error {
 	}
 
 	return fiber.NewError(fiber.StatusForbidden, "Invalid credentials")
+}
+
+func (ctrl *ClientHTTP) Authentication(c *fiber.Ctx) error {
+	authHeader := c.Get("Authentication")
+	if authHeader == "" {
+		return fiber.NewError(fiber.StatusUnauthorized, "Must provide a bearer auth token")
+	}
+
+	token, found := strings.CutPrefix(authHeader, "Bearer ")
+	if !found {
+		return fiber.NewError(fiber.StatusUnauthorized, "Must provide a bearer auth token")
+	}
+
+	activeClient := ctrl.clientSvc.GetActiveClientMetadataFromToken(token)
+	if activeClient == nil {
+		return fiber.NewError(fiber.StatusUnauthorized, "Invalid/expired token")
+	}
+
+	c.Locals("user", activeClient)
+
+	return c.Next()
 }
