@@ -1,6 +1,10 @@
 package controller
 
-import "notification-service/internal/service"
+import (
+	"notification-service/internal/dto"
+	"notification-service/internal/service"
+	"sync"
+)
 
 func NewTestHTTPController() *TestHTTP {
 	return &TestHTTP{}
@@ -8,6 +12,13 @@ func NewTestHTTPController() *TestHTTP {
 
 func NewTestRMQController() *TestRMQ {
 	return &TestRMQ{}
+}
+
+func NewStatsHTTPController() *StatsHTTP {
+	return &StatsHTTP{
+		executionTimes:   map[string]*dto.ExecutionTimes{},
+		executionTimesMu: sync.Mutex{},
+	}
 }
 
 func NewTemplateHTTPController(templateSvc *service.Template) *TemplateHTTP {
