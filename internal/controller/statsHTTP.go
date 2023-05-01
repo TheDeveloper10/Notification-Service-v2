@@ -16,6 +16,8 @@ type StatsHTTP struct {
 
 	executionTimesHTTP   map[string]*dto.ExecutionTimes
 	executionTimesHTTPMu sync.Mutex
+
+	startTime time.Time
 }
 
 func (ctrl *StatsHTTP) Get(c *fiber.Ctx) error {
@@ -26,6 +28,8 @@ func (ctrl *StatsHTTP) Get(c *fiber.Ctx) error {
 		"cachedTemplatesCount": ctrl.templateSvc.GetCachedTemplatesCount(),
 		"hitsTemplatesCache":   ctrl.templateSvc.GetTemplatesCacheHits(),
 		"missesTemplatesCache": ctrl.templateSvc.GetTemplatesCacheMisses(),
+
+		"upTime": time.Now().Unix() - ctrl.startTime.Unix(),
 	})
 }
 

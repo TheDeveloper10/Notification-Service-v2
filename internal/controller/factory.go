@@ -4,6 +4,7 @@ import (
 	"notification-service/internal/dto"
 	"notification-service/internal/service"
 	"sync"
+	"time"
 )
 
 func NewTestHTTPController() *TestHTTP {
@@ -21,6 +22,8 @@ func NewStatsHTTPController(clientSvc *service.Client, templateSvc *service.Temp
 
 		executionTimesHTTP:   map[string]*dto.ExecutionTimes{},
 		executionTimesHTTPMu: sync.Mutex{},
+
+		startTime: time.Now(),
 	}
 }
 
