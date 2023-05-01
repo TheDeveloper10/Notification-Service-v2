@@ -7,8 +7,18 @@ import (
 )
 
 type TemplateBulkFilter struct {
-	PerPage        uint32
-	LastTemplateID uint64
+	PerPage        uint32 `json:"perPage"`
+	LastTemplateID uint64 `json:"lastTemplateId"`
+}
+
+func (tbf *TemplateBulkFilter) Validate() error {
+	if tbf.PerPage == 0 {
+		tbf.PerPage = 20
+	} else if tbf.PerPage > 100 {
+		tbf.PerPage = 100
+	}
+
+	return nil
 }
 
 func (tbf *TemplateBulkFilter) Fill(c *fiber.Ctx) error {

@@ -78,4 +78,22 @@ func (ctrl *TemplateRMQ) Delete(request *amqp.Delivery) (any, bool) {
 	}
 }
 
-// TODO: get bulk
+func (ctrl *TemplateRMQ) GetBulk(request *amqp.Delivery) (any, bool) {
+	body := dto.TemplateBulkFilter{}
+
+	err := json.Unmarshal(request.Body, &body)
+	if err != nil {
+		return &dto.Error{Error: "Body must be in JSON"}, true
+	} else if err := body.Validate(); err != nil {
+		return &dto.Error{Error: err.Error()}, true
+	}
+
+	templates, status := ctrl.templateSvc.GetBulkTemplates(&body)
+	if status == util.StatusSuccess {
+		return templates, true
+	} else if status == util.StatusNotFound {
+		return &dto.Error{Error: "Template not found"}, true
+	} else {
+		return &dto.Error{Error: "Failed to get template"}, true
+	}
+}
