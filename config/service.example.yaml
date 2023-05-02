@@ -41,7 +41,7 @@ rabbitmq:
 
 # configuration for the database
 database:
-  driver: "mysql"
+  driver: "mysql" # the entire codebase is written for this driver
   username: "root"
   password: "nsPass1234"
   host: "localhost:3306"
