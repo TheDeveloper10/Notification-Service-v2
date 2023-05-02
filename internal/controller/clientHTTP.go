@@ -40,7 +40,7 @@ func (ctrl *ClientHTTP) IssueToken(c *fiber.Ctx) error {
 		return c.Status(fiber.StatusCreated).JSON(fiber.Map{
 			"token": token,
 		})
-	} else if status == util.StatusError {
+	} else if status == util.StatusInternal {
 		return fiber.NewError(fiber.StatusInternalServerError, "Failed to issue token")
 	} else if status == util.StatusTooMany {
 		return fiber.NewError(fiber.StatusInternalServerError, "Too many clients")

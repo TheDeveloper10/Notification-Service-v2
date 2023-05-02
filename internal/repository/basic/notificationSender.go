@@ -41,5 +41,5 @@ func (nsr *NotificationSenderRepository) SendPush(notification *dto.Notification
 
 func (nsr *NotificationSenderRepository) handleError(err error) util.StatusCode {
 	util.Logger.Error().Msg(err.Error())
-	return util.StatusError
+	return util.StatusInternal
 }
