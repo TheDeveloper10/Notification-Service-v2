@@ -9,7 +9,6 @@ require (
 	github.com/rabbitmq/amqp091-go v1.8.0
 	github.com/rs/zerolog v1.29.1
 	google.golang.org/api v0.114.0
-	gopkg.in/yaml.v2 v2.4.0
 )
 
 require (

@@ -3,7 +3,7 @@ package config
 import "notification-service/internal/util"
 
 const (
-	ServiceConfigPath    = "config/service.yaml"
+	ServiceConfigPath    = "config/service.json"
 	FirebaseAdminSDKPath = "config/firebase-adminsdk.json"
 )
 
@@ -13,7 +13,7 @@ var (
 
 func InitConfigs() {
 	Master = &MasterConfig{}
-	loadYAML(ServiceConfigPath, &Master)
+	loadConfig(ServiceConfigPath, &Master)
 
 	util.Logger.Info().Msg("Loaded all configs")
 }

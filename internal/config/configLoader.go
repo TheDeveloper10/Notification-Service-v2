@@ -1,32 +1,32 @@
 package config
 
 import (
-	"io"
+	"encoding/json"
+	"io/ioutil"
 	"notification-service/internal/util"
 	"os"
-
-	"gopkg.in/yaml.v2"
 )
 
-func loadYAML(fileName string, out any) bool {
+func loadConfig(fileName string, out any) bool {
 	file, err := os.Open(fileName)
 	if err != nil {
 		util.Logger.Error().Msg(err.Error())
-		util.Logger.Panic().Msgf("Failed to load config from %s", fileName)
+		util.Logger.Panic().Msgf("Failed to open config file %s", fileName)
+		return false
+	}
+	defer file.Close()
+
+	data, err := ioutil.ReadAll(file)
+	if err != nil {
+		util.Logger.Error().Msg(err.Error())
+		util.Logger.Panic().Msgf("Failed to read config file %s", fileName)
 		return false
 	}
 
-	data, err := io.ReadAll(file)
+	err = json.Unmarshal(data, out)
 	if err != nil {
 		util.Logger.Error().Msg(err.Error())
-		util.Logger.Panic().Msgf("Failed to load config from %s", fileName)
-		return false
-	}
-
-	err = yaml.Unmarshal(data, out)
-	if err != nil {
-		util.Logger.Error().Msg(err.Error())
-		util.Logger.Panic().Msgf("Failed to load config from %s", fileName)
+		util.Logger.Panic().Msgf("Failed to unmarshal config file %s", fileName)
 		return false
 	}
 

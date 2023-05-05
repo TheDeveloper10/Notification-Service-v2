@@ -1,0 +1,59 @@
+{
+    "service": {
+      "apis": [
+        "http_rest_v1",
+        "rabbitmq_v1"
+      ],
+      "notification_types": [
+        "mail",
+        "sms",
+        "push"
+      ],
+      "allowed_languages": [
+        "BG",
+        "EN",
+        "DE",
+        "ES",
+        "DA",
+        "CS"
+      ],
+      "auth": {
+        "master_client_id": "Xbr0Wh7Tk0TVfQSn",
+        "master_client_secret": "ANoY0gtFIL3DcyMLzaPEdluRRd95KTzfsZeJbhxMvBkJp1oDly7yRYwiEHUHFqbiqv1ktbfQn1XxQpPgroivbODCI5UY26bqRRlUVnoYJTWRxZxFF3quwFmNdQuj7l20",
+        "token_expiry_time": 3600,
+        "max_active_clients": 10000
+      },
+      "cache": {
+        "templates_cache_limit": 10000,
+        "templates_cache_entry_expiry": 1800,
+        "templates_cache_cleanup_time": 10
+      }
+    },
+    "http": {
+      "address": ":8081"
+    },
+    "rabbitmq": {
+      "username": "guest",
+      "password": "guest",
+      "host": "localhost:5672"
+    },
+    "database": {
+      "driver": "mysql",
+      "username": "root",
+      "password": "nsPass1234",
+      "host": "localhost:3306",
+      "name": "notifications_db",
+      "pool_size": 10
+    },
+    "mail": {
+      "from_email": "your-email@gmail.com",
+      "from_password": "your-password",
+      "host": "smtp.gmail.com",
+      "port": 587
+    },
+    "sms": {
+      "from_phone_number": "+11111111111",
+      "account_sid": "your-account-sid",
+      "authentication_token": "your-authentication-token"
+    }
+  }
